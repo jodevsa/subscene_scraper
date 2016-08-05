@@ -1,6 +1,6 @@
 {
   "name": "subscene_scraper",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Automate subtitle downloading from subscene.com",
   "main": "index.js",
   "scripts": {
