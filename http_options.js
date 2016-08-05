@@ -5,7 +5,7 @@ var main_http_options={
     url:'',
     body:'',
     gzip:true,
-    timeout:5000,
+    timeout:15000,
     headers:{
       'User-Agent': 'Mozilla/5.0',
       'Cookie':'LanguageFilter='
