@@ -7,10 +7,10 @@
 [subd](https://www.npmjs.com/package/subscene_scraper-cli) command
 
 ## changelog v1.2.1
- #### re-written from scratch with promises.
- #### all languages supported by [subscene.com](https://subscene.com/) are now supported.
- #### fixed various bugs.
- #### increased timeout for all requests.
+#### re-written from scratch with promises.
+#### all languages supported by [subscene.com](https://subscene.com/) are now supported.
+#### fixed various bugs.
+#### increased timeout for all requests.
 ## Installation
 
 ### npm install subscene_scraper
