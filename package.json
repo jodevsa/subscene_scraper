@@ -29,7 +29,8 @@
   "dependencies": {
     "bluebird": "",
     "request":"",
-    "cheerio":""
+    "cheerio":"",
+    "adm-zip":""
 
   }
 }

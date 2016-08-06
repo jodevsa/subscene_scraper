@@ -4,6 +4,7 @@ var Promise = require("bluebird");
 var http_options=require('./http_options')
 var handleType=require('./handleType');
 var download_subtitle = require('./download_subtitle');
+var unzip_sub_buffer = require('./unzip_sub_buffer');
 var save_subtitle=require('./save_subtitle')
 
 function determineMovieNameType(filename,lang){
@@ -112,6 +113,7 @@ determineMovieNameType(movieName,language)
 .then(handleType)
 .then(get_subtitle_download_link)
 .then(download_subtitle)
+.then(unzip_sub_buffer)
 .then(save_subtitle(path,callback))
 .catch(handle_error(callback))
 };

@@ -1,0 +1,4 @@
+test.js
+*.srt
+*.zip
+/node_modules

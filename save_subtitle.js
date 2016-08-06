@@ -1,16 +1,36 @@
 var fs=require('fs');
+var path=require('path')
+
+function save_subtitle(path_to_save,callback){
 
 
-function save_subtitle(path,callback){
 return function(pack){
+var log=[]
+pack.map(function(file,n){
+var saveFile=path.join(path_to_save,file.fileName)
+fs.writeFile(saveFile,file.data,function(err){
+  if(err){
+    callback(err,saveFile);
+    return;
+  }
+  else{
 
-var saveFile=path+'/'+pack.filename;
-fs.writeFile(saveFile,pack.data,function(err){
-callback(err,saveFile)
-return ;
+    log.push(saveFile);
+    console.log(log);
+    process.exit();
+}
+})
+if(n==pack.length-1){
+callback(log);
+return;
+}
+
 })
 
+
+
 }
+
 }
 
 
