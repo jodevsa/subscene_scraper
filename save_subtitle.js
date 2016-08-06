@@ -20,7 +20,7 @@ fs.writeFile(saveFile,file.data,function(err){
 }
 if(n==pack.length-1){
 
-callback(0,log);
+callback(err,log);
 return;
 }
 

@@ -28,15 +28,11 @@ var domain = 'https://subscene.com';
 
       var last_link=$('table').eq(0).children('tbody').children('tr').eq(0).children('.a1').children('a').eq(0).attr('href');
 
-    }
-    catch(e){
 
-      reject(e);
-      return;
-    }
+
         if(last_link==undefined ||last_link ==""){
 
-          reject("subtitles not found.");
+          reject(new Error("Subtitles not found."));
           return ;
         }
         else{
@@ -44,7 +40,12 @@ var domain = 'https://subscene.com';
       last_link.replace(' ','')
       resolve(domain+last_link);
     }
+  }
+  catch(e){
 
+    reject(e);
+    return;
+  }
     });
 });
 
@@ -87,9 +88,9 @@ function get_title_sub_list_link(data){
     $target=$($results[value]).next();;
 
     var link=$target.children('li').eq(0).children('div .title').children('a').attr('href');
-    if(link==undefined){
 
-      reject("subtitles not found.");
+    if(link==undefined){
+      reject(new Error("subtitles not found."));
       return;
     }
 
