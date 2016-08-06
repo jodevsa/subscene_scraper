@@ -16,14 +16,16 @@ fs.writeFile(saveFile,file.data,function(err){
   else{
 
     log.push(saveFile);
-    console.log(log);
-    process.exit();
+
 }
-})
 if(n==pack.length-1){
-callback(log);
+
+callback(0,log);
 return;
 }
+
+
+})
 
 })
 
