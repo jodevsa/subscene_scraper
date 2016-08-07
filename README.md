@@ -6,7 +6,7 @@
 ![alt tag](http://i.imgur.com/8KzPIxv.jpg)
 [subd](https://www.npmjs.com/package/subscene_scraper-cli) command
 
-## changelog v1.2.1
+## changelog v1.2.4
 #### re-written from scratch with promises.
 #### all languages supported by [subscene.com](https://subscene.com/) are now supported.
 #### fixed various bugs.
@@ -36,33 +36,4 @@
 
     //savedPath returns location of saved subtitle
     console.log("Subtitle downloaded at",savedPath);
-    });
-
-### example(2)
-##### adding a download progress bar !
-#### what you will need to get started:
- ##### npm install progress
-#### code:
-    var subscene_scraper=require('subscene_scraper');
-    var path=process.cwd()+"\\";
-    var ProgressBar = require('progress');
-    var bar;
-
-    subscene_scraper('interstellar','english',path,function(err,savedPath,data){
-        if(err){
-        console.log("subtitle not found or language not supported");
-        return;
-        }
-
-        console.log("Subtitle downloaded at",savedPath);
-    }).on('start',function(size){
-        bar=new ProgressBar('  downloading [:bar] :percent :etas', {
-        total:size,
-        complete: '=',
-        incomplete: ' ',
-        width: 20,
-        });
-    }).on('data',function(data){
-        bar.tick(data.length);
-
     });
