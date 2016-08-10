@@ -26,7 +26,7 @@
 
     //all languages supported by subscene.com are now supported.
 
-    subscene_scraper('12.Years.a.Slave.2013.720p.DVDSCR.x264.AC3-AVeNGeRZ','english',path,
+    subscene_scraper('interstellar','english',path,
 	function(err,savedPath,data){
     if(err){
 
