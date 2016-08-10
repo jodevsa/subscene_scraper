@@ -6,7 +6,7 @@
 ![alt tag](http://i.imgur.com/8KzPIxv.jpg)
 [subd](https://www.npmjs.com/package/subscene_scraper-cli) command
 
-## changelog v1.2.4
+## changelog v1.2.5
 #### re-written from scratch with promises.
 #### all languages supported by [subscene.com](https://subscene.com/) are now supported.
 #### fixed various bugs.
