@@ -21,18 +21,20 @@
 ### example(1)
 ##### download a subtitle for a movie in our current working directory
 #### code:
+
     var subscene_scraper=require('subscene_scraper');
-    var path=process.cwd()+"\\";
+
+    // for example we will download the subtitle file at current working directory
+    var path=process.cwd();
 
     //all languages supported by subscene.com are now supported.
 
-    subscene_scraper('interstellar','english',path,
-	function(err,savedPath,data){
-    if(err){
+    subscene_scraper('interstellar','english',path,function(err,savedPath,data){
+      if(err){
 
         console.log("error"+err);
         return;
-	}
+	  }
 
     //savedPath returns location of saved subtitle
     console.log("Subtitle downloaded at",savedPath);
