@@ -20,7 +20,7 @@ if(!lang_code){
 }
 
 var domain = 'https://subscene.com';
-url = domain+'/subtitles/title?q='+encodeURIComponent(filename);
+var url = domain+'/subtitles/title?q='+encodeURIComponent(filename);
 r(http_options(url,lang,'HEAD'),function(err,response,body){
   if(err){
     reject(err);
