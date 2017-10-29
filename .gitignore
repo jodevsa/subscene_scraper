@@ -3,3 +3,4 @@ test.js
 *.zip
 /node_modules
 *.rar
+/dist

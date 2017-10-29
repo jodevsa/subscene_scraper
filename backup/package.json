@@ -1,0 +1,35 @@
+{
+  "name": "subscene_scraper",
+  "version": "1.2.6",
+  "description": "Automate subtitle downloading from subscene.com",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jodevsa/subscene_scraper.git"
+  },
+  "keywords": [
+    "sub",
+    "subscene",
+    "fun",
+    "subtitles",
+    "subtitle",
+    "movie",
+    "movies",
+    "api"
+  ],
+  "author": "jodevsa",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jodevsa/subscene_scraper/issues"
+  },
+  "homepage": "https://github.com/jodevsa/subscene_scraper#readme",
+  "dependencies": {
+    "bluebird": "",
+    "request": "",
+    "cheerio": "",
+    "adm-zip": ""
+  }
+}
