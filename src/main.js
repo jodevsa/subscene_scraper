@@ -1,75 +1,100 @@
-"use strict";
+'use strict';
 
 const cheerio = require('cheerio');
 const {promisify} = require('util');
 const req = promisify(require('request'));
-const http_options = require('./http_options')
+const genHttpOptions = require('./http_options');
 const handleType = require('./handleType');
-const download_subtitle = require('./download_subtitle');
-const unzip_sub_buffer = require('./unzip_sub_buffer');
-const save_subtitle = require('./save_subtitle')
+const downloadSubtitle = require('./download_subtitle');
+const unzipSubtitleBuffer = require('./unzip_sub_buffer');
+const saveSubtitle = require('./save_subtitle');
 const domain = 'https://subscene.com/';
+const getLangCode = require('./lang.js');
 
+/**
+ * @typedef MovieTypeData
+ * @property {string} type type of movie (title/release).
+ * @property {string} lang language needed for the movie subtitle.
+ * @property {string} body html response of search request.
+ */
+/** @description Detirmines movies type (title/release).
+ * @param {string} filename - the name of the movie.
+ * @param {string} lang - the language desired
+   @return {Promise.<MovieTypeData>}
+ */
 function determineMovieNameType(filename, lang) {
-
     return new Promise(async function(resolve, reject) {
-        const lang_code = require('./lang.js')(lang);
-
-        if (!lang_code) {
-            reject(new Error('language not supported!'))
+      let langCode=getLangCode(lang);
+        if (!langCode) {
+            reject(new Error('language not supported!'));
             return;
         }
 
         let url = domain + '/subtitles/title?q=' + encodeURIComponent(filename);
         try {
-            let response = await req(http_options(url, lang, 'GET', '', true));
+            const reqOptions=genHttpOptions(url, lang, 'GET', '', true);
+            let response = await req(reqOptions);
             let type = response.request._redirect.redirects.length === 0
                 ? 'title'
                 : 'release';
-            resolve({type: type, lang: lang_code, "body": response.body});
+            resolve({'type': type, 'lang': langCode, 'body': response.body});
         } catch (e) {
             reject(e);
         }
-    })
+    });
 };
 
-function get_subtitle_download_link(Url) {
+/** @description extract subtitle's download link.
+ * @param {string} URL - the name of the movie.
+   @return {Promise.<string>}
+ */
+function getSubtitleDownloadLink(URL) {
     return new Promise(async function(resolve, reject) {
         try {
-            let response = await req(http_options(Url, 'GET', ''));
+            let response = await req(genHttpOptions(URL, 'GET', ''));
             let $ = cheerio.load(response.body);
             let downloadLink = domain + $('.download a').attr('href');
-            resolve(downloadLink)
+            resolve(downloadLink);
         } catch (e) {
             reject(e);
         }
-
     });
 }
 
-function handle_error(callback) {
-    return function(error) {
-        callback(error);
-
-    }
-}
-
-async function subscene_scraper(movieName, language, path, cb) {
-    if (arguments.length != 4) {
-        arguments[arguments.length - 1](new Error("4 parameters must be passed for this function to work."));
-        return;
-    }
-    try {
+/** @description main function.
+ * @param {string} movieName - the name of the movie.
+ * @param {string} language - the name of the movie.
+ * @param {string} path - the name of the movie.
+   @return {Promise.<string>}
+ */
+async function subsceneScraper(movieName, language, path) {
         let movieInfo = await determineMovieNameType(movieName, language);
         let movieType = await handleType(movieInfo);
-        let movieDownloadLink = await get_subtitle_download_link(movieType);
-        let subtitle = await download_subtitle(movieDownloadLink);
-        let pack = await unzip_sub_buffer(subtitle);
-        cb(null, await save_subtitle(path, pack));
-    } catch (e) {
-        cb(e);
-    }
+        let movieDownloadLink = await getSubtitleDownloadLink(movieType);
+        let subtitle = await downloadSubtitle(movieDownloadLink);
+        let files = await unzipSubtitleBuffer(subtitle);
+        return await saveSubtitle(path, files);
 };
 
+/** @description main interface function.
+ * @param {string} movieName - the name of the movie.
+ * @param {string} language - the name of the movie.
+ * @param {string} path - the name of the movie.
+   @param {function} cb - callback.
+ */
+async function mainInterface(movieName, language, path, cb) {
+  if (arguments.length != 4) {
+    let cb=arguments[arguments.length-1];
+    cb(new Error('4 parameters must be passed for this function to work.'));
+  } else {
+try {
+    let data=await subsceneScraper(movieName, language, path);
+    cb(null, data);
+} catch (e) {
+    cb(e);
+}
+}
+}
 
-module.exports = subscene_scraper;
+
+module.exports = mainInterface;

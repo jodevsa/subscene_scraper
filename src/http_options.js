@@ -1,6 +1,6 @@
-"use strict";
+'use strict';
 
-let main_http_options = {
+let mainHttpOptions = {
     followRedirect: false,
     method: 'GET',
     url: '',
@@ -8,13 +8,20 @@ let main_http_options = {
     gzip: true,
     headers: {
         'User-Agent': 'Mozilla/5.0',
-        'Cookie': 'LanguageFilter='
-    }
+        'Cookie': 'LanguageFilter=',
+    },
+};
 
-}
-
-function http_options(url, lang, method, body, followRedirect) {
-    let settings = main_http_options;
+/** @description responsible of generating request options.
+ * @param {string} url - HTTP URL.
+ * @param {string} lang - Subtitle language.
+ * @param {string} method - HTTP METHOD (GET/HEAD/POST/PUT).
+ * @param {string} body - HTTP request body.
+ * @param {boolean} followRedirect - to follow redirects or not (true/false)
+   @return {Promise.<Object>}
+ */
+function genHttpOptions(url, lang, method, body, followRedirect) {
+    let settings = mainHttpOptions;
     settings.url = url;
     settings.followRedirect = followRedirect || false;
     settings.method = method || 'GET';
@@ -23,4 +30,4 @@ function http_options(url, lang, method, body, followRedirect) {
     return settings;
 }
 
-module.exports = http_options;
+module.exports = genHttpOptions;

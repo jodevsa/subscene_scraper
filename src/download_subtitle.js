@@ -1,26 +1,29 @@
-"use strict";
+'use strict';
 
 const {promisify} = require('util');
 const req = promisify(require('request'));
-const cheerio = require('cheerio');
-const http_options = require('./http_options');
+const httpOptions = require('./http_options');
 
-function download_subtitle(link) {
+/** @description responsible of downloading subtitle.
+ * @param {string} link - download link
+   @return {Promise.<Package>}
+ */
+function downloadSubtitle(link) {
     return new Promise(async function(resolve, reject) {
-        let op = http_options(link, '', 'GET');
+        let op = httpOptions(link, '', 'GET');
         op.encoding = null;
         try {
             let response = await req(op);
             let Package = {
-                filename: response.headers['content-disposition'].split(';')[1].split('=')[1],
-                data: response.body
-            }
-            resolve(Package)
+                filename: response
+                .headers['content-disposition'].split(';')[1].split('=')[1],
+                data: response.body,
+            };
+            resolve(Package);
         } catch (e) {
             reject(e);
         }
-
     });
 }
 
-module.exports = download_subtitle;
+module.exports = downloadSubtitle;

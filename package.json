@@ -1,12 +1,13 @@
 {
   "name": "subscene_scraper",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "description": "Automate subtitle downloading from subscene.com",
   "main": "./dist/main.bundle.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "WEBPACK_ENV=build webpack --progress --colors",
-    "dev": "WEBPACK_ENV=dev webpack --progress --colors --watch"
+    "build": "eslint src/ && WEBPACK_ENV=build webpack --progress --colors",
+    "dev": "eslint src/ --debug && WEBPACK_ENV=dev webpack --progress --colors --watch",
+    "eslint": "eslint --debug src/"
   },
   "repository": {
     "type": "git",
@@ -30,9 +31,13 @@
   "homepage": "https://github.com/jodevsa/subscene_scraper#readme",
   "devDependencies": {
     "babel-core": "^6.26.0",
+    "babel-eslint": "^8.0.1",
     "babel-loader": "^7.1.2",
     "babel-preset-env": "^1.6.1",
     "babel-preset-es2015": "^6.24.1",
+    "eslint": "^4.10.0",
+    "eslint-config-google": "^0.9.1",
+    "jsdoc": "^3.5.5",
     "webpack": "^3.8.1",
     "webpack-node-externals": "^1.6.0"
   },

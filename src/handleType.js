@@ -1,17 +1,20 @@
-"use strict";
+'use strict';
 
 const handleTitle = require('./handleTitle');
 const handleRelease = require('./handleRelease');
-
+/**
+ * @typedef MovieTypeData
+ * @property {string} type type of movie (title/release).
+ * @property {string} lang language needed for the movie subtitle.
+ * @property {string} body html response of search request.
+ */
+/** @description handle's movies type (title/release).
+ * @param {MovieTypeData} data
+   @return {handleRelease|handleTitle}
+ */
 function handleType(data) {
-
-    if (data.type == 'release') {
-        return handleRelease(data);
-    } else {
-
-        return handleTitle(data)
-    }
-
+    const handler=data.type === 'release' ? handleRelease : handleTitle;
+    return handler(data);
 }
 
 module.exports = handleType;
