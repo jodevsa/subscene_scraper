@@ -1,7 +1,7 @@
 'use strict';
 
-const handleTitle = require('./handleTitle');
-const handleRelease = require('./handleRelease');
+const handleTitle = require('./handle_title');
+const handleRelease = require('./handle_release');
 /**
  * @typedef MovieTypeData
  * @property {string} type type of movie (title/release).
