@@ -48,7 +48,6 @@ function get_title_sub_list_link(data) {
         let search_link = data.domain;
         let lang = data.lang;
         let domain = 'https://subscene.com';
-        url = search_link;
         try {
             let options = {
                 'TV-Series': 3,
@@ -57,8 +56,8 @@ function get_title_sub_list_link(data) {
                 'Close': 1
             }
 
-            $ = cheerio.load(data.body);
-            $results = $('div .search-result').children('h2');
+            let $ = cheerio.load(data.body);
+            let $results = $('div .search-result').children('h2');
 
             let value = 0;
             let min = 4;
@@ -69,17 +68,17 @@ function get_title_sub_list_link(data) {
                 }
 
             });
-            $target = $($results[value]).next();;
-
+            let $target = $($results[value]).next();;
+            let titleLink=$target.children('li').eq(0).children('div .title').children('a').attr('href');
             if (titleLink == undefined) {
                 reject(new Error("subtitles not found."));
                 return;
             }
-            resolve({lang: lang});
+            resolve({link:(domain + titleLink),lang: lang});
         } catch (e) {
 
             //reject(e);
-            reject($target.text() + "..." + search_link)
+            reject(e)
             return;
 
         }
