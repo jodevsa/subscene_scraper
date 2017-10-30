@@ -213,38 +213,49 @@ var subsceneScraper = function () {
  */
 var mainInterface = function () {
     var _ref4 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(movieName, language, path, cb) {
-        var data,
+        var _cb,
+            data,
             _args4 = arguments;
+
         return regeneratorRuntime.wrap(function _callee4$(_context4) {
             while (1) {
                 switch (_context4.prev = _context4.next) {
                     case 0:
-                        if (_args4.length != 4) {
-                            new Error('4 parameters must be passed for this function to work.');
+                        if (!(_args4.length != 4)) {
+                            _context4.next = 5;
+                            break;
                         }
-                        _context4.prev = 1;
-                        _context4.next = 4;
+
+                        _cb = _args4[_args4.length - 1];
+
+                        _cb(new Error('4 parameters must be passed for this function to work.'));
+                        _context4.next = 15;
+                        break;
+
+                    case 5:
+                        _context4.prev = 5;
+                        _context4.next = 8;
                         return subsceneScraper(movieName, language, path);
 
-                    case 4:
+                    case 8:
                         data = _context4.sent;
 
                         cb(null, data);
-                        _context4.next = 11;
+                        _context4.next = 15;
                         break;
 
-                    case 8:
-                        _context4.prev = 8;
-                        _context4.t0 = _context4['catch'](1);
+                    case 12:
+                        _context4.prev = 12;
+                        _context4.t0 = _context4['catch'](5);
 
                         cb(_context4.t0);
 
-                    case 11:
+                    case 15:
                     case 'end':
                         return _context4.stop();
                 }
             }
-        }, _callee4, this, [[1, 8]]);
+        }, _callee4, this, [[5, 12]]);
     }));
 
     return function mainInterface(_x8, _x9, _x10, _x11) {
