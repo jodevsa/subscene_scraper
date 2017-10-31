@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "eslint src/ && WEBPACK_ENV=build webpack --progress --colors",
-    "dev": "eslint src/ --debug && WEBPACK_ENV=dev webpack --progress --colors --watch",
+    "dev": "WEBPACK_ENV=dev webpack --progress --colors --watch",
     "eslint": "eslint --debug src/"
   },
   "repository": {

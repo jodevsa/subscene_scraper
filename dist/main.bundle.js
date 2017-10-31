@@ -167,7 +167,7 @@ var subsceneScraper = function () {
                     case 2:
                         movieInfo = _context3.sent;
                         _context3.next = 5;
-                        return handleType(movieInfo);
+                        return (0, _handle_type2.default)(movieInfo);
 
                     case 5:
                         movieType = _context3.sent;
@@ -177,17 +177,17 @@ var subsceneScraper = function () {
                     case 8:
                         movieDownloadLink = _context3.sent;
                         _context3.next = 11;
-                        return downloadSubtitle(movieDownloadLink);
+                        return (0, _download_subtitle2.default)(movieDownloadLink);
 
                     case 11:
                         subtitle = _context3.sent;
                         _context3.next = 14;
-                        return unzipSubtitleBuffer(subtitle);
+                        return (0, _unzip_sub_buffer2.default)(subtitle);
 
                     case 14:
                         files = _context3.sent;
                         _context3.next = 17;
-                        return saveSubtitle(path, files);
+                        return (0, _save_subtitle2.default)(path, files);
 
                     case 17:
                         return _context3.abrupt('return', _context3.sent);
@@ -263,22 +263,46 @@ var mainInterface = function () {
     };
 }();
 
+var _cheerio = __webpack_require__(0);
+
+var _cheerio2 = _interopRequireDefault(_cheerio);
+
+var _util = __webpack_require__(1);
+
+var _request = __webpack_require__(2);
+
+var _request2 = _interopRequireDefault(_request);
+
+var _http_options = __webpack_require__(3);
+
+var _http_options2 = _interopRequireDefault(_http_options);
+
+var _handle_type = __webpack_require__(8);
+
+var _handle_type2 = _interopRequireDefault(_handle_type);
+
+var _download_subtitle = __webpack_require__(11);
+
+var _download_subtitle2 = _interopRequireDefault(_download_subtitle);
+
+var _unzip_sub_buffer = __webpack_require__(12);
+
+var _unzip_sub_buffer2 = _interopRequireDefault(_unzip_sub_buffer);
+
+var _save_subtitle = __webpack_require__(14);
+
+var _save_subtitle2 = _interopRequireDefault(_save_subtitle);
+
+var _lang = __webpack_require__(16);
+
+var _lang2 = _interopRequireDefault(_lang);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
-var cheerio = __webpack_require__(0);
-
-var _require = __webpack_require__(1),
-    promisify = _require.promisify;
-
-var req = promisify(__webpack_require__(2));
-var genHttpOptions = __webpack_require__(3);
-var handleType = __webpack_require__(8);
-var downloadSubtitle = __webpack_require__(11);
-var unzipSubtitleBuffer = __webpack_require__(12);
-var saveSubtitle = __webpack_require__(14);
 var domain = 'https://subscene.com/';
-var getLangCode = __webpack_require__(16);
-
+var req = (0, _util.promisify)(_request2.default);
 /**
  * @typedef MovieTypeData
  * @property {string} type type of movie (title/release).
@@ -298,7 +322,7 @@ function determineMovieNameType(filename, lang) {
                 while (1) {
                     switch (_context.prev = _context.next) {
                         case 0:
-                            langCode = getLangCode(lang);
+                            langCode = (0, _lang2.default)(lang);
 
                             if (langCode) {
                                 _context.next = 4;
@@ -311,7 +335,7 @@ function determineMovieNameType(filename, lang) {
                         case 4:
                             url = domain + '/subtitles/title?q=' + encodeURIComponent(filename);
                             _context.prev = 5;
-                            reqOptions = genHttpOptions(url, lang, 'GET', '', true);
+                            reqOptions = (0, _http_options2.default)(url, lang, 'GET', '', true);
                             _context.next = 9;
                             return req(reqOptions);
 
@@ -350,36 +374,39 @@ function determineMovieNameType(filename, lang) {
 function getSubtitleDownloadLink(URL) {
     return new Promise(function () {
         var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(resolve, reject) {
-            var response, $, downloadLink;
+            var url, response, $, downloadLink;
             return regeneratorRuntime.wrap(function _callee2$(_context2) {
                 while (1) {
                     switch (_context2.prev = _context2.next) {
                         case 0:
-                            _context2.prev = 0;
-                            _context2.next = 3;
-                            return req(genHttpOptions(URL, 'GET', ''));
+                            // until we apply this to handleTitle
+                            // it will always be an array.
+                            url = Array.isArray(URL) ? URL[0] : URL;
+                            _context2.prev = 1;
+                            _context2.next = 4;
+                            return req((0, _http_options2.default)(url, 'GET', ''));
 
-                        case 3:
+                        case 4:
                             response = _context2.sent;
-                            $ = cheerio.load(response.body);
+                            $ = _cheerio2.default.load(response.body);
                             downloadLink = domain + $('.download a').attr('href');
 
                             resolve(downloadLink);
-                            _context2.next = 12;
+                            _context2.next = 13;
                             break;
 
-                        case 9:
-                            _context2.prev = 9;
-                            _context2.t0 = _context2['catch'](0);
+                        case 10:
+                            _context2.prev = 10;
+                            _context2.t0 = _context2['catch'](1);
 
                             reject(_context2.t0);
 
-                        case 12:
+                        case 13:
                         case 'end':
                             return _context2.stop();
                     }
                 }
-            }, _callee2, this, [[0, 9]]);
+            }, _callee2, this, [[1, 10]]);
         }));
 
         return function (_x3, _x4) {
@@ -429,23 +456,27 @@ module.exports = handleType;
  */
 var handleTitle = function () {
     var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(data) {
-        var link;
+        var _ref2, movieList, language;
+
         return regeneratorRuntime.wrap(function _callee$(_context) {
             while (1) {
                 switch (_context.prev = _context.next) {
                     case 0:
                         _context.next = 2;
-                        return getTitleSubListLink(data);
+                        return getTitleMovies(data);
 
                     case 2:
-                        link = _context.sent;
-                        _context.next = 5;
-                        return getTitleSubLink(link);
+                        _ref2 = _context.sent;
+                        movieList = _ref2.movies;
+                        language = _ref2.lang;
+                        _context.next = 7;
+                        return getTitleSubLink({ lang: language,
+                            url: chooseTitleMoviePassive(movieList) });
 
-                    case 5:
+                    case 7:
                         return _context.abrupt('return', _context.sent);
 
-                    case 6:
+                    case 8:
                     case 'end':
                         return _context.stop();
                 }
@@ -464,65 +495,92 @@ var handleTitle = function () {
  */
 
 
+var _util = __webpack_require__(1);
+
+var _request = __webpack_require__(2);
+
+var _request2 = _interopRequireDefault(_request);
+
+var _cheerio = __webpack_require__(0);
+
+var _cheerio2 = _interopRequireDefault(_cheerio);
+
+var _http_options = __webpack_require__(3);
+
+var _http_options2 = _interopRequireDefault(_http_options);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
-var _require = __webpack_require__(1),
-    promisify = _require.promisify;
+var req = (0, _util.promisify)(_request2.default);
+var domain = 'https://subscene.com';
+var TitleOptions = ['Exact', 'Close', 'Popular', 'TV-Series'];
 
-var req = promisify(__webpack_require__(2));
-var httpOptions = __webpack_require__(3);
-var cheerio = __webpack_require__(0);function getTitleSubLink(data) {
+/** @description responsible of choosing first title movie! when in passive
+    mode.
+ * @param {string} movieList - pack
+   @return {string}
+ */
+function chooseTitleMoviePassive(movieList) {
+    var i = 0;
+    for (var movieType in movieList) {
+        if (TitleOptions[i] === movieType) {
+            return domain + movieList[movieType][0].link;
+        }
+        i += 1;
+    }
+}function getTitleSubLink(data) {
     return new Promise(function () {
-        var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(resolve, reject) {
-            var domain, url, lang, response, $, lastLink;
+        var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(resolve, reject) {
+            var url, lang, response, $, lastLink;
             return regeneratorRuntime.wrap(function _callee2$(_context2) {
                 while (1) {
                     switch (_context2.prev = _context2.next) {
                         case 0:
-                            domain = 'https://subscene.com';
-                            url = data.link;
+                            url = data.url;
                             lang = data.lang;
-                            _context2.prev = 3;
-                            _context2.next = 6;
-                            return req(httpOptions(url, lang, 'GET'));
+                            _context2.prev = 2;
+                            _context2.next = 5;
+                            return req((0, _http_options2.default)(url, lang, 'GET'));
 
-                        case 6:
+                        case 5:
                             response = _context2.sent;
-                            $ = cheerio.load(response.body);
+                            $ = _cheerio2.default.load(response.body);
                             lastLink = $('table').eq(0).children('tbody').children('tr').eq(0).children('.a1').children('a').eq(0).attr('href');
 
                             if (!(lastLink === undefined || lastLink === '')) {
-                                _context2.next = 14;
+                                _context2.next = 13;
                                 break;
                             }
 
                             reject(new Error('Subtitles not found.'));
                             return _context2.abrupt('return');
 
-                        case 14:
+                        case 13:
                             resolve(domain + lastLink);
 
-                        case 15:
-                            _context2.next = 21;
+                        case 14:
+                            _context2.next = 20;
                             break;
 
-                        case 17:
-                            _context2.prev = 17;
-                            _context2.t0 = _context2['catch'](3);
+                        case 16:
+                            _context2.prev = 16;
+                            _context2.t0 = _context2['catch'](2);
 
                             reject(_context2.t0);
                             return _context2.abrupt('return');
 
-                        case 21:
+                        case 20:
                         case 'end':
                             return _context2.stop();
                     }
                 }
-            }, _callee2, this, [[3, 17]]);
+            }, _callee2, this, [[2, 16]]);
         }));
 
         return function (_x2, _x3) {
-            return _ref2.apply(this, arguments);
+            return _ref3.apply(this, arguments);
         };
     }());
 }
@@ -531,36 +589,28 @@ var cheerio = __webpack_require__(0);function getTitleSubLink(data) {
  * @param {string} data - pack
    @return {Promise.<Array>}
  */
-function getTitleSubListLink(data) {
+function getTitleMovies(data) {
     //  Exact>close>popular>tv-series
     return new Promise(function (resolve, reject) {
-        var lang = data.lang;
-        var domain = 'https://subscene.com';
+        var language = data.lang;
         try {
-            var options = {
-                'TV-Series': 3,
-                'Exact': 0,
-                'Popular': 2,
-                'Close': 1
-            };
-            var $ = cheerio.load(data.body);
-            var $results = $('div .search-result').children('h2');
+            var $ = _cheerio2.default.load(data.body);
+            var movieTitleList = {};
 
-            var value = 0;
-            var min = 4;
-            $results.map(function (n, element) {
-                if (options[$(element).text().replace(' ', '')] < min) {
-                    min = options[$(element).text().replace(' ', '')];
-                    value = n;
-                }
+            $('div .search-result').children('h2').map(function (n, element) {
+                var header = $(element).text();
+                movieTitleList[header] = [];
+                $(element).next().children('li').map(function (n, value) {
+                    $(value).children('div .title').children('a').map(function (n, Movie) {
+                        var val = { movie: $(Movie).text(),
+                            link: $(Movie).attr('href') };
+
+                        movieTitleList[header].push(val);
+                    });
+                });
             });
-            var $target = $($results[value]).next();
-            var titleLink = $target.children('li').eq(0).children('div .title').children('a').attr('href');
-            if (titleLink == undefined) {
-                reject(new Error('subtitles not found.'));
-                return;
-            }
-            resolve({ link: domain + titleLink, lang: lang });
+
+            resolve({ movies: movieTitleList, lang: language });
         } catch (e) {
             reject(e);
         }
@@ -587,16 +637,20 @@ var domain = 'https://subscene.com';
 function handleRelease(data) {
     return new Promise(function () {
         var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(resolve, reject) {
-            var $, subLink;
+            var $, releaseTable, releaseLinks;
             return regeneratorRuntime.wrap(function _callee$(_context) {
                 while (1) {
                     switch (_context.prev = _context.next) {
                         case 0:
                             try {
                                 $ = cheerio.load(data.body);
-                                subLink = $('table tbody tr').eq(0).children('.a1').children('a').eq(0).attr('href');
+                                releaseTable = $('table tbody tr');
+                                releaseLinks = Array.prototype.slice.call(releaseTable.map(function (index, value) {
+                                    var path = $(value).children('.a1').children('a').eq(0).attr('href');
+                                    return domain + path;
+                                }));
 
-                                resolve(domain + subLink);
+                                resolve(releaseLinks);
                             } catch (e) {
                                 reject(e);
                             }

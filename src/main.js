@@ -1,16 +1,17 @@
 'use strict';
 
-const cheerio = require('cheerio');
-const {promisify} = require('util');
-const req = promisify(require('request'));
-const genHttpOptions = require('./http_options');
-const handleType = require('./handle_type');
-const downloadSubtitle = require('./download_subtitle');
-const unzipSubtitleBuffer = require('./unzip_sub_buffer');
-const saveSubtitle = require('./save_subtitle');
-const domain = 'https://subscene.com/';
-const getLangCode = require('./lang.js');
+import cheerio from 'cheerio';
+import {promisify} from 'util';
+import request from 'request';
+import genHttpOptions from './http_options';
+import handleType from './handle_type';
+import downloadSubtitle from './download_subtitle';
+import unzipSubtitleBuffer from './unzip_sub_buffer';
+import saveSubtitle from './save_subtitle';
+import getLangCode from './lang';
 
+const domain = 'https://subscene.com/';
+const req = promisify(request);
 /**
  * @typedef MovieTypeData
  * @property {string} type type of movie (title/release).
@@ -50,8 +51,11 @@ function determineMovieNameType(filename, lang) {
  */
 function getSubtitleDownloadLink(URL) {
     return new Promise(async function(resolve, reject) {
+        // until we apply this to handleTitle
+        // it will always be an array.
+        const url = Array.isArray(URL)?URL[0]:URL;
         try {
-            let response = await req(genHttpOptions(URL, 'GET', ''));
+            let response = await req(genHttpOptions(url, 'GET', ''));
             let $ = cheerio.load(response.body);
             let downloadLink = domain + $('.download a').attr('href');
             resolve(downloadLink);
@@ -83,16 +87,16 @@ async function subsceneScraper(movieName, language, path) {
    @param {function} cb - callback.
  */
 async function mainInterface(movieName, language, path, cb) {
-  if (arguments.length != 4) {
-    let cb=arguments[arguments.length-1];
+if (arguments.length != 4) {
+    let cb = arguments[arguments.length - 1];
     cb(new Error('4 parameters must be passed for this function to work.'));
-  } else {
-try {
-    let data=await subsceneScraper(movieName, language, path);
-    cb(null, data);
-} catch (e) {
-    cb(e);
-}
+} else {
+    try {
+        let data = await subsceneScraper(movieName, language, path);
+        cb(null, data);
+    } catch (e) {
+        cb(e);
+    }
 }
 }
 

@@ -9,10 +9,15 @@ const domain = 'https://subscene.com';
 function handleRelease(data) {
     return new Promise(async function(resolve, reject) {
         try {
-            let $ = cheerio.load(data.body);
-            let subLink = $('table tbody tr')
-            .eq(0).children('.a1').children('a').eq(0).attr('href');
-            resolve(domain + subLink);
+            const $ = cheerio.load(data.body);
+            const releaseTable = $('table tbody tr');
+            const releaseLinks=Array.prototype.slice.call(
+              releaseTable.map((index, value)=>{
+              const path=
+              $(value).children('.a1').children('a').eq(0).attr('href');
+              return (domain+path);
+            }));
+            resolve(releaseLinks);
         } catch (e) {
             reject(e);
         }

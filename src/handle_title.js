@@ -1,17 +1,41 @@
 'use strict';
 
-const {promisify} = require('util');
-const req = promisify(require('request'));
-const httpOptions = require('./http_options');
-const cheerio = require('cheerio');
+import {promisify} from 'util';
+import request from 'request';
+import cheerio from 'cheerio';
+import httpOptions from './http_options';
 
-/** @description responsible of handling movie subtitles of type title.
- * @param {string} data - pack
-   @return {Promise.<Array>}
+const req = promisify(request);
+const domain = 'https://subscene.com';
+const TitleOptions = [
+      'Exact',
+      'Close',
+      'Popular',
+    'TV-Series',
+];
+
+/** @description responsible of choosing first title movie! when in passive
+    mode.
+ * @param {string} movieList - pack
+   @return {string}
  */
+ function chooseTitleMoviePassive(movieList) {
+   let i=0;
+   for (const movieType in movieList) {
+     if (TitleOptions[i] === movieType) {
+       return domain + movieList[movieType][0].link;
+     }
+     i+=1;
+   }
+ }
+ /** @description responsible of handling movie subtitles of type title.
+  * @param {string} data - pack
+    @return {Promise.<Array>}
+  */
 async function handleTitle(data) {
-    let link = await getTitleSubListLink(data);
-    return await getTitleSubLink(link);
+    const {movies: movieList, lang: language} = await getTitleMovies(data);
+    return await getTitleSubLink({lang: language,
+      url: chooseTitleMoviePassive(movieList)});
 }
 
 /** @description responsible of handling movie subtitles of type title.
@@ -20,13 +44,12 @@ async function handleTitle(data) {
  */
 function getTitleSubLink(data) {
     return new Promise(async function(resolve, reject) {
-        let domain = 'https://subscene.com';
-        let url = data.link;
-        let lang = data.lang;
+        const url = data.url;
+        const lang = data.lang;
         try {
-            let response = await req(httpOptions(url, lang, 'GET'));
-            let $ = cheerio.load(response.body);
-            let lastLink = $('table').eq(0).children('tbody').children('tr')
+            const response = await req(httpOptions(url, lang, 'GET'));
+            const $ = cheerio.load(response.body);
+            const lastLink = $('table').eq(0).children('tbody').children('tr')
             .eq(0).children('.a1').children('a').eq(0).attr('href');
 
             if (lastLink === undefined || lastLink === '') {
@@ -46,37 +69,28 @@ function getTitleSubLink(data) {
  * @param {string} data - pack
    @return {Promise.<Array>}
  */
-function getTitleSubListLink(data) {
+function getTitleMovies(data) {
     //  Exact>close>popular>tv-series
     return new Promise(function(resolve, reject) {
-        let lang = data.lang;
-        let domain = 'https://subscene.com';
+        const language= data.lang;
         try {
-            let options = {
-                'TV-Series': 3,
-                'Exact': 0,
-                'Popular': 2,
-                'Close': 1,
-            };
-            let $ = cheerio.load(data.body);
-            let $results = $('div .search-result').children('h2');
+            const $ = cheerio.load(data.body);
+            const movieTitleList={};
 
-            let value = 0;
-            let min = 4;
-            $results.map(function(n, element) {
-                if (options[$(element).text().replace(' ', '')] < min) {
-                    min = options[$(element).text().replace(' ', '')];
-                    value = n;
-                }
+            $('div .search-result').children('h2').map(function(n, element) {
+              const header=$(element).text();
+              movieTitleList[header]=[];
+              $(element).next().children('li').map((n, value)=>{
+                $(value).children('div .title').children('a').map((n, Movie)=>{
+                  const val={movie: $(Movie).text(),
+                    link: $(Movie).attr('href')};
+
+                  movieTitleList[header].push(val);
+                  });
+                });
             });
-            let $target = $($results[value]).next();
-            let titleLink=$target.children('li').eq(0)
-            .children('div .title').children('a').attr('href');
-            if (titleLink == undefined) {
-                reject(new Error('subtitles not found.'));
-                return;
-            }
-            resolve({link: (domain + titleLink), lang: lang});
+
+            resolve({movies: movieTitleList, lang: language});
         } catch (e) {
             reject(e);
         }
