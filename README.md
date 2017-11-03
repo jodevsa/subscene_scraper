@@ -3,8 +3,8 @@
 ### subscene_scraper
 #
 #
-![alt tag](http://i.imgur.com/8KzPIxv.jpg)
-[subd](https://www.npmjs.com/package/subscene_scraper-cli) command
+[![asciicast](https://asciinema.org/a/1TwTvEdgZGUbJRZIORIGJr0ey.png)](https://asciinema.org/a/1TwTvEdgZGUbJRZIORIGJr0ey)
+[subd](https://github.com/jodevsa/subd) command
 
 ## changelog v1.2.5
 #### re-written from scratch with promises.
