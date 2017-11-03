@@ -192,17 +192,21 @@ var req = function () {
   };
 }();
 
-var _util = __webpack_require__(10);
-
-var _request = __webpack_require__(11);
+var _request = __webpack_require__(10);
 
 var _request2 = _interopRequireDefault(_request);
+
+var _util = __webpack_require__(11);
+
+var _util2 = _interopRequireDefault(_util);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
-var reqP = (0, _util.promisify)(_request2.default);
+__webpack_require__(12).shim();
+
+var reqP = _util2.default.promisify(_request2.default);
 var retry = 3;
 var blockCode = 409;
 var sleeptime = 800;
@@ -841,15 +845,15 @@ var _handle_type = __webpack_require__(9);
 
 var _handle_type2 = _interopRequireDefault(_handle_type);
 
-var _download_subtitle = __webpack_require__(13);
+var _download_subtitle = __webpack_require__(14);
 
 var _download_subtitle2 = _interopRequireDefault(_download_subtitle);
 
-var _unzip_sub_buffer = __webpack_require__(14);
+var _unzip_sub_buffer = __webpack_require__(15);
 
 var _unzip_sub_buffer2 = _interopRequireDefault(_unzip_sub_buffer);
 
-var _save_subtitle = __webpack_require__(16);
+var _save_subtitle = __webpack_require__(17);
 
 var _save_subtitle2 = _interopRequireDefault(_save_subtitle);
 
@@ -863,7 +867,7 @@ var _req2 = _interopRequireDefault(_req);
 
 var _handle_title = __webpack_require__(4);
 
-var _events = __webpack_require__(18);
+var _events = __webpack_require__(19);
 
 var _events2 = _interopRequireDefault(_events);
 
@@ -1027,7 +1031,7 @@ var handleType = function () {
 
 var _handle_title = __webpack_require__(4);
 
-var _handle_release = __webpack_require__(12);
+var _handle_release = __webpack_require__(13);
 
 var _handle_release2 = _interopRequireDefault(_handle_release);
 
@@ -1041,16 +1045,22 @@ exports.default = handleType;
 /* 10 */
 /***/ (function(module, exports) {
 
-module.exports = require("util");
+module.exports = require("request");
 
 /***/ }),
 /* 11 */
 /***/ (function(module, exports) {
 
-module.exports = require("request");
+module.exports = require("util");
 
 /***/ }),
 /* 12 */
+/***/ (function(module, exports) {
+
+module.exports = require("util.promisify");
+
+/***/ }),
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1089,7 +1099,7 @@ function handleRelease(data) {
 exports.default = handleRelease;
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1153,7 +1163,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
 exports.default = downloadSubtitle;
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1167,7 +1177,7 @@ var _path = __webpack_require__(5);
 
 var _path2 = _interopRequireDefault(_path);
 
-var _admZip = __webpack_require__(15);
+var _admZip = __webpack_require__(16);
 
 var _admZip2 = _interopRequireDefault(_admZip);
 
@@ -1204,13 +1214,13 @@ function unzipSubtitleBuffer(data) {
 exports.default = unzipSubtitleBuffer;
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports) {
 
 module.exports = require("adm-zip");
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1224,7 +1234,7 @@ var _path = __webpack_require__(5);
 
 var _path2 = _interopRequireDefault(_path);
 
-var _fs = __webpack_require__(17);
+var _fs = __webpack_require__(18);
 
 var _fs2 = _interopRequireDefault(_fs);
 
@@ -1278,13 +1288,13 @@ function saveSubtitle(savePath, files) {
 exports.default = saveSubtitle;
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports) {
 
 module.exports = require("fs");
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports) {
 
 module.exports = require("events");

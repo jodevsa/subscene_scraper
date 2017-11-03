@@ -1,9 +1,8 @@
 'use strict';
-
-import {promisify} from 'util';
+require('util.promisify').shim();
 import request from 'request';
-
-const reqP = promisify(request);
+import util from 'util';
+const reqP = util.promisify(request);
 const retry = 3;
 const blockCode = 409;
 const sleeptime = 800;
