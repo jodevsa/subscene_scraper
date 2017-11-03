@@ -61,132 +61,1233 @@ module.exports =
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 13);
+/******/ 	return __webpack_require__(__webpack_require__.s = 6);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-"use strict";
-eval("\n\nObject.defineProperty(exports, \"__esModule\", {\n    value: true\n});\n\nvar _lang = __webpack_require__(4);\n\nvar _lang2 = _interopRequireDefault(_lang);\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\n/** @description responsible of generating request options.\n * @param {string} URL - HTTP URL.\n * @param {string} lang - Subtitle language.\n * @param {string} method - HTTP METHOD (GET/HEAD/POST/PUT).\n * @param {string} body - HTTP request body.\n * @param {boolean} followRedirect - to follow redirects or not (true/false)\n   @return {Promise.<Object>}\n */\nfunction genHttpOptions(URL, lang, method, body, followRedirect) {\n    var settings = Object.seal({\n        followRedirect: false,\n        method: 'GET',\n        url: '',\n        body: '',\n        encoding: 'utf-8',\n        gzip: true,\n        headers: {\n            'User-Agent': 'Mozilla/5.0',\n            'Cookie': 'LanguageFilter='\n        }\n    });\n    settings.url = URL;\n    settings.followRedirect = followRedirect || false;\n    settings.method = method || 'GET';\n    settings.headers.Cookie += (0, _lang2.default)(lang) || '13';\n    settings.body = body || '';\n    debugger;\n    return settings;\n}\n\nexports.default = genHttpOptions;\n\n//////////////////\n// WEBPACK FOOTER\n// ./src/http_options.js\n// module id = 0\n// module chunks = 0\n\n//# sourceURL=webpack:///./src/http_options.js?");
+module.exports = require("cheerio");
 
 /***/ }),
 /* 1 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-eval("module.exports = require(\"util\");\n\n//////////////////\n// WEBPACK FOOTER\n// external \"util\"\n// module id = 1\n// module chunks = 0\n\n//# sourceURL=webpack:///external_%22util%22?");
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _lang = __webpack_require__(3);
+
+var _lang2 = _interopRequireDefault(_lang);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/** @description responsible of generating request options.
+ * @param {string} URL - HTTP URL.
+ * @param {string} lang - Subtitle language.
+ * @param {string} method - HTTP METHOD (GET/HEAD/POST/PUT).
+ * @param {string} body - HTTP request body.
+ * @param {boolean} followRedirect - to follow redirects or not (true/false)
+   @return {Promise.<Object>}
+ */
+function genHttpOptions(URL, lang, method, body, followRedirect) {
+    var settings = Object.seal({
+        followRedirect: false,
+        method: 'GET',
+        url: '',
+        body: '',
+        encoding: 'utf-8',
+        gzip: true,
+        headers: {
+            'User-Agent': 'Mozilla/5.0',
+            'Cookie': 'LanguageFilter='
+        }
+    });
+    settings.url = URL;
+    settings.followRedirect = followRedirect || false;
+    settings.method = method || 'GET';
+    settings.headers.Cookie += (0, _lang2.default)(lang) || '13';
+    settings.body = body || '';
+    debugger;
+    return settings;
+}
+
+exports.default = genHttpOptions;
 
 /***/ }),
 /* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\n\nObject.defineProperty(exports, \"__esModule\", {\n  value: true\n});\n\n/** @description wrapper around a promisifed request function that retries.\n * @param {Object} options - request optipons.\n   @return {Respones}\n*/\nvar req = function () {\n  var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(options) {\n    var response, i;\n    return regeneratorRuntime.wrap(function _callee$(_context) {\n      while (1) {\n        switch (_context.prev = _context.next) {\n          case 0:\n            _context.next = 2;\n            return reqP(options);\n\n          case 2:\n            response = _context.sent;\n            i = 0;\n\n          case 4:\n            if (!(response.statusCode === blockCode && i < retry)) {\n              _context.next = 13;\n              break;\n            }\n\n            _context.next = 7;\n            return sleep(sleeptime);\n\n          case 7:\n            _context.next = 9;\n            return reqP(options);\n\n          case 9:\n            response = _context.sent;\n\n            i += 1;\n            _context.next = 4;\n            break;\n\n          case 13:\n            if (!(response.statusCode === blockCode)) {\n              _context.next = 15;\n              break;\n            }\n\n            return _context.abrupt('return', Promise.reject(new Error('script got blocked 409 resCode')));\n\n          case 15:\n            return _context.abrupt('return', response);\n\n          case 16:\n          case 'end':\n            return _context.stop();\n        }\n      }\n    }, _callee, this);\n  }));\n\n  return function req(_x) {\n    return _ref.apply(this, arguments);\n  };\n}();\n\nvar _util = __webpack_require__(1);\n\nvar _request = __webpack_require__(3);\n\nvar _request2 = _interopRequireDefault(_request);\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nfunction _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step(\"next\", value); }, function (err) { step(\"throw\", err); }); } } return step(\"next\"); }); }; }\n\nvar reqP = (0, _util.promisify)(_request2.default);\nvar retry = 3;\nvar blockCode = 409;\nvar sleeptime = 800;\n\n/** @description sleep//setTimeout.\n * @param {string} seconds - number of seconds to sleep.\n   @return {Respones}\n*/\nfunction sleep(seconds) {\n  return new Promise(function (resolve, reject) {\n    setTimeout(function () {\n      resolve(seconds);\n    }, seconds);\n  });\n}exports.default = req;\n\n//////////////////\n// WEBPACK FOOTER\n// ./src/req.js\n// module id = 2\n// module chunks = 0\n\n//# sourceURL=webpack:///./src/req.js?");
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+/** @description wrapper around a promisifed request function that retries.
+ * @param {Object} options - request optipons.
+   @return {Respones}
+*/
+var req = function () {
+  var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(options) {
+    var response, i;
+    return regeneratorRuntime.wrap(function _callee$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
+            _context.next = 2;
+            return reqP(options);
+
+          case 2:
+            response = _context.sent;
+            i = 0;
+
+          case 4:
+            if (!(response.statusCode === blockCode && i < retry)) {
+              _context.next = 13;
+              break;
+            }
+
+            _context.next = 7;
+            return sleep(sleeptime);
+
+          case 7:
+            _context.next = 9;
+            return reqP(options);
+
+          case 9:
+            response = _context.sent;
+
+            i += 1;
+            _context.next = 4;
+            break;
+
+          case 13:
+            if (!(response.statusCode === blockCode)) {
+              _context.next = 15;
+              break;
+            }
+
+            return _context.abrupt('return', Promise.reject(new Error('script got blocked 409 resCode')));
+
+          case 15:
+            return _context.abrupt('return', response);
+
+          case 16:
+          case 'end':
+            return _context.stop();
+        }
+      }
+    }, _callee, this);
+  }));
+
+  return function req(_x) {
+    return _ref.apply(this, arguments);
+  };
+}();
+
+var _util = __webpack_require__(10);
+
+var _request = __webpack_require__(11);
+
+var _request2 = _interopRequireDefault(_request);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
+var reqP = (0, _util.promisify)(_request2.default);
+var retry = 3;
+var blockCode = 409;
+var sleeptime = 800;
+
+/** @description sleep//setTimeout.
+ * @param {string} seconds - number of seconds to sleep.
+   @return {Respones}
+*/
+function sleep(seconds) {
+  return new Promise(function (resolve, reject) {
+    setTimeout(function () {
+      resolve(seconds);
+    }, seconds);
+  });
+}exports.default = req;
 
 /***/ }),
 /* 3 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-eval("module.exports = require(\"request\");\n\n//////////////////\n// WEBPACK FOOTER\n// external \"request\"\n// module id = 3\n// module chunks = 0\n\n//# sourceURL=webpack:///external_%22request%22?");
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+var languageSet = Object.freeze({
+    'arabic': '2',
+    'brazillianportuguese': '4',
+    'danish': '10',
+    'dutch': '11',
+    'english': '13',
+    'farsi/persian': '46',
+    'finnish': '17',
+    'french': '18',
+    'hebrew': '22',
+    'indonesian': '44',
+    'italian': '26',
+    'norwegian': '30',
+    'romanian': '33',
+    'spanish': '38',
+    'swedish': '39',
+    'vietnamese': '45',
+    'albanian': '1',
+    'armenian': '73',
+    'azerbaijani': '55',
+    'basque': '74',
+    'belarusian': '68',
+    'bengali': '54',
+    'big5 code': '3',
+    'bosnian': '60',
+    'bulgarian': '5',
+    'bulgarian/english': '6',
+    'burmese': '61',
+    'catalan': '49',
+    'chinesebg code': '7',
+    'croatian': '8',
+    'czech': '9',
+    'dutch/english': '12',
+    'english/german': '15',
+    'esperanto': '47',
+    'estonian': '16',
+    'georgian': '62',
+    'german': '19',
+    'greek': '21',
+    'greenlandic': '57',
+    'hindi': '51',
+    'hungarian': '23',
+    'hungarian/english': '24',
+    'icelandic': '25',
+    'japanese': '27',
+    'korean': '28',
+    'kurdish': '52',
+    'latvian': '29',
+    'lithuanian': '43',
+    'macedonian': '48',
+    'malay': '50',
+    'malayalam': '64',
+    'manipuri': '65',
+    'mongolian': '72',
+    'pashto': '67',
+    'polish': '31',
+    'portuguese': '32',
+    'punjabi': '66',
+    'russian': '34',
+    'serbian': '35',
+    'sinhala': '58',
+    'slovak': '36',
+    'slovenian': '37',
+    'somali': '70',
+    'tagalog': '53',
+    'tamil': '59',
+    'telugu': '63',
+    'thai': '40',
+    'turkish': '41',
+    'urdu': '42',
+    'ukrainian': '56'
+});
+
+/** @description map string language with it's subscene langCode.
+ * @param {string} lang - location to save file.
+   @return {boolean}
+ */
+function getLanguageCode(lang) {
+    var l = lang.toLowerCase().trim();
+    if (languageSet[l] != undefined) {
+        return languageSet[l];
+    } else {
+        return false;
+    }
+}
+
+exports.default = getLanguageCode;
 
 /***/ }),
 /* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\n\nObject.defineProperty(exports, \"__esModule\", {\n    value: true\n});\nvar languageSet = Object.freeze({\n    'arabic': '2',\n    'brazillianportuguese': '4',\n    'danish': '10',\n    'dutch': '11',\n    'english': '13',\n    'farsi/persian': '46',\n    'finnish': '17',\n    'french': '18',\n    'hebrew': '22',\n    'indonesian': '44',\n    'italian': '26',\n    'norwegian': '30',\n    'romanian': '33',\n    'spanish': '38',\n    'swedish': '39',\n    'vietnamese': '45',\n    'albanian': '1',\n    'armenian': '73',\n    'azerbaijani': '55',\n    'basque': '74',\n    'belarusian': '68',\n    'bengali': '54',\n    'big5 code': '3',\n    'bosnian': '60',\n    'bulgarian': '5',\n    'bulgarian/english': '6',\n    'burmese': '61',\n    'catalan': '49',\n    'chinesebg code': '7',\n    'croatian': '8',\n    'czech': '9',\n    'dutch/english': '12',\n    'english/german': '15',\n    'esperanto': '47',\n    'estonian': '16',\n    'georgian': '62',\n    'german': '19',\n    'greek': '21',\n    'greenlandic': '57',\n    'hindi': '51',\n    'hungarian': '23',\n    'hungarian/english': '24',\n    'icelandic': '25',\n    'japanese': '27',\n    'korean': '28',\n    'kurdish': '52',\n    'latvian': '29',\n    'lithuanian': '43',\n    'macedonian': '48',\n    'malay': '50',\n    'malayalam': '64',\n    'manipuri': '65',\n    'mongolian': '72',\n    'pashto': '67',\n    'polish': '31',\n    'portuguese': '32',\n    'punjabi': '66',\n    'russian': '34',\n    'serbian': '35',\n    'sinhala': '58',\n    'slovak': '36',\n    'slovenian': '37',\n    'somali': '70',\n    'tagalog': '53',\n    'tamil': '59',\n    'telugu': '63',\n    'thai': '40',\n    'turkish': '41',\n    'urdu': '42',\n    'ukrainian': '56'\n});\n\n/** @description map string language with it's subscene langCode.\n * @param {string} lang - location to save file.\n   @return {boolean}\n */\nfunction getLanguageCode(lang) {\n    var l = lang.toLowerCase().trim();\n    if (languageSet[l] != undefined) {\n        return languageSet[l];\n    } else {\n        return false;\n    }\n}\n\nexports.default = getLanguageCode;\n\n//////////////////\n// WEBPACK FOOTER\n// ./src/lang.js\n// module id = 4\n// module chunks = 0\n\n//# sourceURL=webpack:///./src/lang.js?");
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.getExactTitleList = exports.getExactTitlePassive = exports.getTitleSubtitles = undefined;
+
+/** @description responsible of choosing first title movie! when in passive
+     mode.
+  * @param {string} movieList - pack
+    @return {string}
+  */
+/** @description responsible of handling movie subtitles of type title.
+  * @param {string} data - pack
+  * @param {string} passive - pack
+    @return {Promise.<Array>}
+  */
+var getExactTitleList = function () {
+  var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(data) {
+    var _ref2, movieList;
+
+    return regeneratorRuntime.wrap(function _callee$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
+            _context.next = 2;
+            return getTitles(data);
+
+          case 2:
+            _ref2 = _context.sent;
+            movieList = _ref2.movies;
+            return _context.abrupt('return', movieList);
+
+          case 5:
+          case 'end':
+            return _context.stop();
+        }
+      }
+    }, _callee, this);
+  }));
+
+  return function getExactTitleList(_x) {
+    return _ref.apply(this, arguments);
+  };
+}();
+/** @description responsible of handling movie subtitles of type title.
+ * @param {string} data - pack
+ * @param {string} passive - pack
+   @return {Promise.<Array>}
+ */
+
+
+var getExactTitlePassive = function () {
+  var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(data) {
+    var _ref4, movieList, language, result;
+
+    return regeneratorRuntime.wrap(function _callee2$(_context2) {
+      while (1) {
+        switch (_context2.prev = _context2.next) {
+          case 0:
+            _context2.next = 2;
+            return getTitles(data);
+
+          case 2:
+            _ref4 = _context2.sent;
+            movieList = _ref4.movies;
+            language = _ref4.lang;
+            result = chooseTitleMoviePassive(movieList);
+            _context2.next = 8;
+            return getTitleSubLink({ lang: language, result: result });
+
+          case 8:
+            return _context2.abrupt('return', _context2.sent);
+
+          case 9:
+          case 'end':
+            return _context2.stop();
+        }
+      }
+    }, _callee2, this);
+  }));
+
+  return function getExactTitlePassive(_x2) {
+    return _ref3.apply(this, arguments);
+  };
+}();
+
+/** @description responsible of handling movie subtitles of type title.
+ * @param {string} data - pack
+   @return {Array}
+ */
+
+
+var getTitleSubtitles = function () {
+  var _ref5 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(data) {
+    var url, lang, op, response, $, subtitles, lastLink;
+    return regeneratorRuntime.wrap(function _callee3$(_context3) {
+      while (1) {
+        switch (_context3.prev = _context3.next) {
+          case 0:
+            url = data.url;
+            lang = data.lang;
+            op = (0, _http_options2.default)(url, lang, 'GET');
+            _context3.next = 5;
+            return (0, _req2.default)(op);
+
+          case 5:
+            response = _context3.sent;
+            $ = _cheerio2.default.load(response.body);
+            subtitles = [];
+            lastLink = $('table').eq(0).children('tbody').children('tr').children('td.a1');
+
+            lastLink.map(function (index, val) {
+              var releaseUrl = $(val).children('a').attr('href');
+              var releaseName = $(val).children('a').children('span').eq(1).text().trim();
+              subtitles.push({
+                url: domain + releaseUrl,
+                name: releaseName
+              });
+            });
+            return _context3.abrupt('return', subtitles);
+
+          case 11:
+          case 'end':
+            return _context3.stop();
+        }
+      }
+    }, _callee3, this);
+  }));
+
+  return function getTitleSubtitles(_x3) {
+    return _ref5.apply(this, arguments);
+  };
+}();
+
+/** @description responsible of handling movie subtitles of type title.
+ * @param {string} data - pack
+   @return {Promise.<Array>}
+ */
+
+
+var getTitles = function () {
+  var _ref6 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(data) {
+    var language, $, movieTitleList;
+    return regeneratorRuntime.wrap(function _callee4$(_context4) {
+      while (1) {
+        switch (_context4.prev = _context4.next) {
+          case 0:
+            //  Exact>close>popular>tv-series
+            language = data.lang;
+            $ = _cheerio2.default.load(data.body);
+            movieTitleList = {};
+
+            $('div .search-result').children('h2').map(function (n, element) {
+              var header = $(element).text();
+              movieTitleList[header] = [];
+              $(element).next().children('li').map(function (n, value) {
+                $(value).children('div .title').children('a').map(function (n, Movie) {
+                  var val = {
+                    name: $(Movie).text(),
+                    link: domain + $(Movie).attr('href')
+                  };
+
+                  movieTitleList[header].push(val);
+                });
+              });
+            });
+
+            return _context4.abrupt('return', { movies: movieTitleList, lang: language });
+
+          case 5:
+          case 'end':
+            return _context4.stop();
+        }
+      }
+    }, _callee4, this);
+  }));
+
+  return function getTitles(_x4) {
+    return _ref6.apply(this, arguments);
+  };
+}();
+
+var _cheerio = __webpack_require__(0);
+
+var _cheerio2 = _interopRequireDefault(_cheerio);
+
+var _http_options = __webpack_require__(1);
+
+var _http_options2 = _interopRequireDefault(_http_options);
+
+var _req = __webpack_require__(2);
+
+var _req2 = _interopRequireDefault(_req);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
+var domain = 'https://subscene.com';
+var TitleOptions = ['Exact', 'Close', 'Popular', 'TV-Series'];
+
+/** @description responsible of choosing first title movie! when in passive
+    mode.
+ * @param {string} movieList - pack
+   @return {string}
+ */
+function chooseTitleMoviePassive(movieList) {
+  var i = 0;
+  for (var movieType in movieList) {
+    if (TitleOptions[i] === movieType) {
+      return domain + movieList[movieType][0].link;
+    }
+    i += 1;
+  }
+};
+
+exports.getTitleSubtitles = getTitleSubtitles;
+exports.getExactTitlePassive = getExactTitlePassive;
+exports.getExactTitleList = getExactTitleList;
 
 /***/ }),
 /* 5 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-"use strict";
-eval("\n\nObject.defineProperty(exports, \"__esModule\", {\n  value: true\n});\nexports.getExactTitleList = exports.getExactTitlePassive = exports.getTitleSubtitles = undefined;\n\n/** @description responsible of choosing first title movie! when in passive\n     mode.\n  * @param {string} movieList - pack\n    @return {string}\n  */\n/** @description responsible of handling movie subtitles of type title.\n  * @param {string} data - pack\n  * @param {string} passive - pack\n    @return {Promise.<Array>}\n  */\nvar getExactTitleList = function () {\n  var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(data) {\n    var _ref2, movieList;\n\n    return regeneratorRuntime.wrap(function _callee$(_context) {\n      while (1) {\n        switch (_context.prev = _context.next) {\n          case 0:\n            _context.next = 2;\n            return getTitles(data);\n\n          case 2:\n            _ref2 = _context.sent;\n            movieList = _ref2.movies;\n            return _context.abrupt('return', movieList);\n\n          case 5:\n          case 'end':\n            return _context.stop();\n        }\n      }\n    }, _callee, this);\n  }));\n\n  return function getExactTitleList(_x) {\n    return _ref.apply(this, arguments);\n  };\n}();\n/** @description responsible of handling movie subtitles of type title.\n * @param {string} data - pack\n * @param {string} passive - pack\n   @return {Promise.<Array>}\n */\n\n\nvar getExactTitlePassive = function () {\n  var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(data) {\n    var _ref4, movieList, language, result;\n\n    return regeneratorRuntime.wrap(function _callee2$(_context2) {\n      while (1) {\n        switch (_context2.prev = _context2.next) {\n          case 0:\n            _context2.next = 2;\n            return getTitles(data);\n\n          case 2:\n            _ref4 = _context2.sent;\n            movieList = _ref4.movies;\n            language = _ref4.lang;\n            result = chooseTitleMoviePassive(movieList);\n            _context2.next = 8;\n            return getTitleSubLink({ lang: language, result: result });\n\n          case 8:\n            return _context2.abrupt('return', _context2.sent);\n\n          case 9:\n          case 'end':\n            return _context2.stop();\n        }\n      }\n    }, _callee2, this);\n  }));\n\n  return function getExactTitlePassive(_x2) {\n    return _ref3.apply(this, arguments);\n  };\n}();\n\n/** @description responsible of handling movie subtitles of type title.\n * @param {string} data - pack\n   @return {Array}\n */\n\n\nvar getTitleSubtitles = function () {\n  var _ref5 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(data) {\n    var url, lang, op, response, $, subtitles, lastLink;\n    return regeneratorRuntime.wrap(function _callee3$(_context3) {\n      while (1) {\n        switch (_context3.prev = _context3.next) {\n          case 0:\n            url = data.url;\n            lang = data.lang;\n            op = (0, _http_options2.default)(url, lang, 'GET');\n            _context3.next = 5;\n            return (0, _req2.default)(op);\n\n          case 5:\n            response = _context3.sent;\n            $ = _cheerio2.default.load(response.body);\n            subtitles = [];\n            lastLink = $('table').eq(0).children('tbody').children('tr').children('td.a1');\n\n            lastLink.map(function (index, val) {\n              var releaseUrl = $(val).children('a').attr('href');\n              var releaseName = $(val).children('a').children('span').eq(1).text().trim();\n              subtitles.push({\n                url: domain + releaseUrl,\n                name: releaseName\n              });\n            });\n            return _context3.abrupt('return', subtitles);\n\n          case 11:\n          case 'end':\n            return _context3.stop();\n        }\n      }\n    }, _callee3, this);\n  }));\n\n  return function getTitleSubtitles(_x3) {\n    return _ref5.apply(this, arguments);\n  };\n}();\n\n/** @description responsible of handling movie subtitles of type title.\n * @param {string} data - pack\n   @return {Promise.<Array>}\n */\n\n\nvar getTitles = function () {\n  var _ref6 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(data) {\n    var language, $, movieTitleList;\n    return regeneratorRuntime.wrap(function _callee4$(_context4) {\n      while (1) {\n        switch (_context4.prev = _context4.next) {\n          case 0:\n            //  Exact>close>popular>tv-series\n            language = data.lang;\n            $ = _cheerio2.default.load(data.body);\n            movieTitleList = {};\n\n            $('div .search-result').children('h2').map(function (n, element) {\n              var header = $(element).text();\n              movieTitleList[header] = [];\n              $(element).next().children('li').map(function (n, value) {\n                $(value).children('div .title').children('a').map(function (n, Movie) {\n                  var val = {\n                    name: $(Movie).text(),\n                    link: domain + $(Movie).attr('href')\n                  };\n\n                  movieTitleList[header].push(val);\n                });\n              });\n            });\n\n            return _context4.abrupt('return', { movies: movieTitleList, lang: language });\n\n          case 5:\n          case 'end':\n            return _context4.stop();\n        }\n      }\n    }, _callee4, this);\n  }));\n\n  return function getTitles(_x4) {\n    return _ref6.apply(this, arguments);\n  };\n}();\n\nvar _cheerio = __webpack_require__(6);\n\nvar _cheerio2 = _interopRequireDefault(_cheerio);\n\nvar _http_options = __webpack_require__(0);\n\nvar _http_options2 = _interopRequireDefault(_http_options);\n\nvar _req = __webpack_require__(2);\n\nvar _req2 = _interopRequireDefault(_req);\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nfunction _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step(\"next\", value); }, function (err) { step(\"throw\", err); }); } } return step(\"next\"); }); }; }\n\nvar domain = 'https://subscene.com';\nvar TitleOptions = ['Exact', 'Close', 'Popular', 'TV-Series'];\n\n/** @description responsible of choosing first title movie! when in passive\n    mode.\n * @param {string} movieList - pack\n   @return {string}\n */\nfunction chooseTitleMoviePassive(movieList) {\n  var i = 0;\n  for (var movieType in movieList) {\n    if (TitleOptions[i] === movieType) {\n      return domain + movieList[movieType][0].link;\n    }\n    i += 1;\n  }\n};\n\nexports.getTitleSubtitles = getTitleSubtitles;\nexports.getExactTitlePassive = getExactTitlePassive;\nexports.getExactTitleList = getExactTitleList;\n\n//////////////////\n// WEBPACK FOOTER\n// ./src/handle_title.js\n// module id = 5\n// module chunks = 0\n\n//# sourceURL=webpack:///./src/handle_title.js?");
+module.exports = require("path");
 
 /***/ }),
 /* 6 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-eval("module.exports = require(\"cheerio\");\n\n//////////////////\n// WEBPACK FOOTER\n// external \"cheerio\"\n// module id = 6\n// module chunks = 0\n\n//# sourceURL=webpack:///external_%22cheerio%22?");
+__webpack_require__(7);
+module.exports = __webpack_require__(8);
+
 
 /***/ }),
 /* 7 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-"use strict";
-eval("\n\nObject.defineProperty(exports, \"__esModule\", {\n    value: true\n});\n\nvar _path = __webpack_require__(8);\n\nvar _path2 = _interopRequireDefault(_path);\n\nvar _fs = __webpack_require__(16);\n\nvar _fs2 = _interopRequireDefault(_fs);\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nfunction _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step(\"next\", value); }, function (err) { step(\"throw\", err); }); } } return step(\"next\"); }); }; }\n\n/** @description responsible of saving subtitle files to disk.\n * @param {string} savePath - location to save file.\n * @param {array} files - array of subtitle files.\n   @return {Promise.<log>}\n */\nfunction saveSubtitle(savePath, files) {\n    return new Promise(function () {\n        var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(resolve, reject) {\n            var log;\n            return regeneratorRuntime.wrap(function _callee$(_context) {\n                while (1) {\n                    switch (_context.prev = _context.next) {\n                        case 0:\n                            log = [];\n\n                            files.map(function (file, n) {\n                                var saveFile = _path2.default.join(savePath, file.fileName);\n                                _fs2.default.writeFile(saveFile, file.data, function (err) {\n                                    if (err) {\n                                        reject(err);\n                                    } else {\n                                        log.push(saveFile);\n                                    }\n                                    if (n == files.length - 1) {\n                                        resolve(log);\n                                    }\n                                });\n                            });\n\n                        case 2:\n                        case 'end':\n                            return _context.stop();\n                    }\n                }\n            }, _callee, this);\n        }));\n\n        return function (_x, _x2) {\n            return _ref.apply(this, arguments);\n        };\n    }());\n}\n\nexports.default = saveSubtitle;\n\n//////////////////\n// WEBPACK FOOTER\n// ./src/save_subtitle.js\n// module id = 7\n// module chunks = 0\n\n//# sourceURL=webpack:///./src/save_subtitle.js?");
+module.exports = require("babel-polyfill");
 
 /***/ }),
 /* 8 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-eval("module.exports = require(\"path\");\n\n//////////////////\n// WEBPACK FOOTER\n// external \"path\"\n// module id = 8\n// module chunks = 0\n\n//# sourceURL=webpack:///external_%22path%22?");
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.passiveDownloader = exports.interactiveDownloader = undefined;
+
+/**
+ * @typedef MovieTypeData
+ * @property {string} type type of movie (title/release).
+ * @property {string} lang language needed for the movie subtitle.
+ * @property {string} body html response of search request.
+ */
+/** @description Detirmines movies type (title/release).
+ * @param {string} filename - the name of the movie.
+ * @param {string} lang - the language desired
+   @return {Promise.<MovieTypeData>}
+ */
+var determineMovieNameType = function () {
+  var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(filename, lang) {
+    var langCode, url, reqOptions, response, type;
+    return regeneratorRuntime.wrap(function _callee$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
+            langCode = (0, _lang2.default)(lang);
+
+            if (langCode) {
+              _context.next = 3;
+              break;
+            }
+
+            return _context.abrupt('return', Promise.reject(new Error('language not supported!')));
+
+          case 3:
+            url = domain + '/subtitles/title?q=' + encodeURIComponent(filename);
+            reqOptions = (0, _http_options2.default)(url, lang, 'GET', '', true);
+            _context.next = 7;
+            return (0, _req2.default)(reqOptions);
+
+          case 7:
+            response = _context.sent;
+            type = response.request._redirect.redirects.length === 0 ? 'title' : 'release';
+            return _context.abrupt('return', { '_name': filename,
+              'type': type,
+              'lang': langCode,
+              'body': response.body });
+
+          case 10:
+          case 'end':
+            return _context.stop();
+        }
+      }
+    }, _callee, this);
+  }));
+
+  return function determineMovieNameType(_x, _x2) {
+    return _ref.apply(this, arguments);
+  };
+}();
+
+/** @description extract subtitle's download link.
+ * @param {string} URL - the name of the movie.
+   @return {Promise.<string>}
+ */
+var getSubtitleDownloadLink = function () {
+  var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(URL) {
+    var url, response, $, downloadLink;
+    return regeneratorRuntime.wrap(function _callee2$(_context2) {
+      while (1) {
+        switch (_context2.prev = _context2.next) {
+          case 0:
+            // until we apply this to handleTitle
+            // it will always be an array.
+            url = Array.isArray(URL) ? URL[0] : URL;
+            _context2.next = 3;
+            return (0, _req2.default)((0, _http_options2.default)(url, 'GET', ''));
+
+          case 3:
+            response = _context2.sent;
+            $ = _cheerio2.default.load(response.body);
+            downloadLink = domain + $('.download a').attr('href');
+            return _context2.abrupt('return', downloadLink);
+
+          case 7:
+          case 'end':
+            return _context2.stop();
+        }
+      }
+    }, _callee2, this);
+  }));
+
+  return function getSubtitleDownloadLink(_x3) {
+    return _ref2.apply(this, arguments);
+  };
+}();
+
+/** @description main function.
+ * @param {string} movieName - the name of the movie.
+ * @param {string} language - the name of the movie.
+ * @param {string} path - the name of the movie.
+   @return {Promise.<string>}
+ */
+
+
+var getMovieSubtitleDetails = function () {
+  var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(movieName, language) {
+    var movieInfo, result;
+    return regeneratorRuntime.wrap(function _callee3$(_context3) {
+      while (1) {
+        switch (_context3.prev = _context3.next) {
+          case 0:
+            _context3.next = 2;
+            return determineMovieNameType(movieName, language);
+
+          case 2:
+            movieInfo = _context3.sent;
+            _context3.next = 5;
+            return (0, _handle_type2.default)(movieInfo);
+
+          case 5:
+            result = _context3.sent;
+            return _context3.abrupt('return', {
+              type: movieInfo.type,
+              result: result
+            });
+
+          case 7:
+          case 'end':
+            return _context3.stop();
+        }
+      }
+    }, _callee3, this);
+  }));
+
+  return function getMovieSubtitleDetails(_x4, _x5) {
+    return _ref3.apply(this, arguments);
+  };
+}();
+
+/** @description download's subtitle passivly, choose's first subtitle found.
+* @param {string} movieName - the name of the movie.
+* @param {string} lang - the name of the movie.
+* @param {string} path - the name of the movie.
+  @return {Promise.<string>}
+*/
+
+
+var passiveDownloader = function () {
+  var _ref4 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(movieName, lang, path) {
+    var language, movieInfo, movieURL, list, releaseURL, result, _releaseURL, _result;
+
+    return regeneratorRuntime.wrap(function _callee4$(_context4) {
+      while (1) {
+        switch (_context4.prev = _context4.next) {
+          case 0:
+            language = lang || 'english';
+            _context4.next = 3;
+            return getMovieSubtitleDetails(movieName, language);
+
+          case 3:
+            movieInfo = _context4.sent;
+
+            if (!(movieInfo.type === 'title')) {
+              _context4.next = 16;
+              break;
+            }
+
+            movieURL = chooseTitleMoviePassive(movieInfo.result); // 1
+
+            _context4.next = 8;
+            return (0, _handle_title.getTitleSubtitles)({ url: movieURL, lang: language });
+
+          case 8:
+            list = _context4.sent;
+            releaseURL = list[0].url; // 2
+
+            _context4.next = 12;
+            return downloadReleaseSubtitle(releaseURL, path);
+
+          case 12:
+            result = _context4.sent;
+            return _context4.abrupt('return', result);
+
+          case 16:
+            _releaseURL = movieInfo.result[0].url;
+            _context4.next = 19;
+            return downloadReleaseSubtitle(_releaseURL, path);
+
+          case 19:
+            _result = _context4.sent;
+            return _context4.abrupt('return', _result);
+
+          case 21:
+          case 'end':
+            return _context4.stop();
+        }
+      }
+    }, _callee4, this);
+  }));
+
+  return function passiveDownloader(_x6, _x7, _x8) {
+    return _ref4.apply(this, arguments);
+  };
+}();
+
+/** @description download's and save's subtitle of releaseURL.
+* @param {string} releaseURL - url of release.
+* @param {string} location - location to save.
+  @return {Object}
+*/
+
+
+var downloadReleaseSubtitle = function () {
+  var _ref5 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee5(releaseURL, location) {
+    var downloadLink, file, unPackedFile;
+    return regeneratorRuntime.wrap(function _callee5$(_context5) {
+      while (1) {
+        switch (_context5.prev = _context5.next) {
+          case 0:
+            _context5.next = 2;
+            return getSubtitleDownloadLink(releaseURL);
+
+          case 2:
+            downloadLink = _context5.sent;
+            _context5.next = 5;
+            return (0, _download_subtitle2.default)(downloadLink);
+
+          case 5:
+            file = _context5.sent;
+            _context5.next = 8;
+            return (0, _unzip_sub_buffer2.default)(file);
+
+          case 8:
+            unPackedFile = _context5.sent;
+            _context5.next = 11;
+            return (0, _save_subtitle2.default)(location || '.', unPackedFile);
+
+          case 11:
+            return _context5.abrupt('return', _context5.sent);
+
+          case 12:
+          case 'end':
+            return _context5.stop();
+        }
+      }
+    }, _callee5, this);
+  }));
+
+  return function downloadReleaseSubtitle(_x9, _x10) {
+    return _ref5.apply(this, arguments);
+  };
+}();
+
+/** @description simple async emitter....
+* @param {string} emitter - the name of the movie.
+* @param {string} e - event.
+  @return {Object}
+*/
+
+
+var _cheerio = __webpack_require__(0);
+
+var _cheerio2 = _interopRequireDefault(_cheerio);
+
+var _http_options = __webpack_require__(1);
+
+var _http_options2 = _interopRequireDefault(_http_options);
+
+var _handle_type = __webpack_require__(9);
+
+var _handle_type2 = _interopRequireDefault(_handle_type);
+
+var _download_subtitle = __webpack_require__(13);
+
+var _download_subtitle2 = _interopRequireDefault(_download_subtitle);
+
+var _unzip_sub_buffer = __webpack_require__(14);
+
+var _unzip_sub_buffer2 = _interopRequireDefault(_unzip_sub_buffer);
+
+var _save_subtitle = __webpack_require__(16);
+
+var _save_subtitle2 = _interopRequireDefault(_save_subtitle);
+
+var _lang = __webpack_require__(3);
+
+var _lang2 = _interopRequireDefault(_lang);
+
+var _req = __webpack_require__(2);
+
+var _req2 = _interopRequireDefault(_req);
+
+var _handle_title = __webpack_require__(4);
+
+var _events = __webpack_require__(18);
+
+var _events2 = _interopRequireDefault(_events);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
+var domain = 'https://subscene.com/';
+var TitleOptions = Object.freeze(['Exact', 'Close', 'Popular', 'TV-Series']);;
+
+/** @description return's the first title in the available options
+  [exact,close,popular,tv-series].
+ * @param {string} movieList - the name of the movie.
+   @return {String}
+ */
+function chooseTitleMoviePassive(movieList) {
+  var i = 0;
+  for (var movieType in movieList) {
+    if (TitleOptions[i] === movieType) {
+      return movieList[movieType][0].link;
+    }
+    i += 1;
+  }
+}function asyncemit(emitter, e) {
+  for (var _len = arguments.length, params = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
+    params[_key - 2] = arguments[_key];
+  }
+
+  return new Promise(function (resolve) {
+    emitter.emit.apply(emitter, [e].concat(params, [function (c) {
+      resolve(c);
+    }]));
+  });
+}
+/** @description download's subtitle passivly, choose's first subtitle found.
+* @param {string} movieName - the name of the movie.
+* @param {string} lang - the name of the movie.
+* @param {string} path - the name of the movie.
+  @return {Object}
+*/
+function interactiveDownloader(movieName, lang, path) {
+  var _this = this;
+
+  var emitter = new _events2.default();
+  process.nextTick(_asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee6() {
+    var language, movieInfo, titleURL, list, releaseURL, result, _releaseURL2, _result2;
+
+    return regeneratorRuntime.wrap(function _callee6$(_context6) {
+      while (1) {
+        switch (_context6.prev = _context6.next) {
+          case 0:
+            language = lang || 'english';
+            _context6.next = 3;
+            return getMovieSubtitleDetails(movieName, language);
+
+          case 3:
+            movieInfo = _context6.sent;
+
+            if (!(movieInfo.type === 'title')) {
+              _context6.next = 20;
+              break;
+            }
+
+            _context6.next = 7;
+            return asyncemit(emitter, 'info', movieInfo);
+
+          case 7:
+            titleURL = _context6.sent;
+            _context6.next = 10;
+            return (0, _handle_title.getTitleSubtitles)({ url: titleURL, lang: language });
+
+          case 10:
+            list = _context6.sent;
+            _context6.next = 13;
+            return asyncemit(emitter, 'title', list);
+
+          case 13:
+            releaseURL = _context6.sent;
+            _context6.next = 16;
+            return downloadReleaseSubtitle(releaseURL, path);
+
+          case 16:
+            result = _context6.sent;
+
+            emitter.emit('done', result, movieName);
+            _context6.next = 27;
+            break;
+
+          case 20:
+            _context6.next = 22;
+            return asyncemit(emitter, 'info', movieInfo);
+
+          case 22:
+            _releaseURL2 = _context6.sent;
+            _context6.next = 25;
+            return downloadReleaseSubtitle(_releaseURL2, path);
+
+          case 25:
+            _result2 = _context6.sent;
+
+            emitter.emit('done', _result2, movieName);
+
+          case 27:
+          case 'end':
+            return _context6.stop();
+        }
+      }
+    }, _callee6, _this);
+  })));
+  return emitter;
+}
+
+exports.interactiveDownloader = interactiveDownloader;
+exports.passiveDownloader = passiveDownloader;
 
 /***/ }),
 /* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\n\nObject.defineProperty(exports, \"__esModule\", {\n    value: true\n});\n\nvar _path = __webpack_require__(8);\n\nvar _path2 = _interopRequireDefault(_path);\n\nvar _admZip = __webpack_require__(17);\n\nvar _admZip2 = _interopRequireDefault(_admZip);\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\n/** @description responsible of unpacking subtitles.\n * @param {string} data - pack\n   @return {Promise.<Array>}\n */\nfunction unzipSubtitleBuffer(data) {\n    return new Promise(function (resolve, reject) {\n        var files = [];\n        // if rar neglict .. ******FEATURE  Neeeded*****\n        if (_path2.default.extname(data.filename) == '.rar') {\n            files.push({ 'fileName': data.filename, 'data': data.data });\n            resolve(files);\n        }\n\n        try {\n            var zip = new _admZip2.default(data.data);\n            zip.getEntries().forEach(function (entry) {\n                var entryName = entry.entryName;\n                // decompressed buffer of the entry\n                var decompressedData = zip.readFile(entry);\n                files.push({ 'fileName': entryName, 'data': decompressedData });\n            });\n            resolve(files);\n        } catch (e) {\n            reject(new Error('Error while unzipping subtitle+\\n' + e));\n        }\n    });\n}\n\nexports.default = unzipSubtitleBuffer;\n\n//////////////////\n// WEBPACK FOOTER\n// ./src/unzip_sub_buffer.js\n// module id = 9\n// module chunks = 0\n\n//# sourceURL=webpack:///./src/unzip_sub_buffer.js?");
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+/**
+ * @typedef MovieTypeData
+ * @property {string} type type of movie (title/release).
+ * @property {string} lang language needed for the movie subtitle.
+ * @property {string} body html response of search request.
+ */
+/** @description handle's movies type (title/release).
+ * @param {MovieTypeData} data
+  * @param {MovieTypeData} isPassive
+   @return {handleRelease|handleTitle}
+ */
+var handleType = function () {
+  var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(data, isPassive) {
+    var handleTitle, handler;
+    return regeneratorRuntime.wrap(function _callee$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
+            handleTitle = isPassive ? _handle_title.getExactTitlePassive : _handle_title.getExactTitleList;
+            handler = data.type === 'release' ? _handle_release2.default : handleTitle;
+            return _context.abrupt('return', handler(data));
+
+          case 3:
+          case 'end':
+            return _context.stop();
+        }
+      }
+    }, _callee, this);
+  }));
+
+  return function handleType(_x, _x2) {
+    return _ref.apply(this, arguments);
+  };
+}();
+
+var _handle_title = __webpack_require__(4);
+
+var _handle_release = __webpack_require__(12);
+
+var _handle_release2 = _interopRequireDefault(_handle_release);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
+exports.default = handleType;
 
 /***/ }),
 /* 10 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-"use strict";
-eval("\n\nObject.defineProperty(exports, \"__esModule\", {\n  value: true\n});\n\n/** @description responsible of downloading subtitle.\n * @param {string} downloadURL - download link\n   @return {Promise.<Package>}\n */\nvar downloadSubtitle = function () {\n  var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(downloadURL) {\n    var op, response, filename, Package;\n    return regeneratorRuntime.wrap(function _callee$(_context) {\n      while (1) {\n        switch (_context.prev = _context.next) {\n          case 0:\n            op = (0, _http_options2.default)(downloadURL, 'english', 'GET');\n\n            op.encoding = null;\n            _context.next = 4;\n            return (0, _req2.default)(op);\n\n          case 4:\n            response = _context.sent;\n            filename = response.headers['content-disposition'].split(';')[1].split('=')[1];\n            Package = {\n              filename: filename,\n              data: response.body\n            };\n            return _context.abrupt('return', Package);\n\n          case 8:\n          case 'end':\n            return _context.stop();\n        }\n      }\n    }, _callee, this);\n  }));\n\n  return function downloadSubtitle(_x) {\n    return _ref.apply(this, arguments);\n  };\n}();\n\nvar _req = __webpack_require__(2);\n\nvar _req2 = _interopRequireDefault(_req);\n\nvar _http_options = __webpack_require__(0);\n\nvar _http_options2 = _interopRequireDefault(_http_options);\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nfunction _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step(\"next\", value); }, function (err) { step(\"throw\", err); }); } } return step(\"next\"); }); }; }\n\nexports.default = downloadSubtitle;\n\n//////////////////\n// WEBPACK FOOTER\n// ./src/download_subtitle.js\n// module id = 10\n// module chunks = 0\n\n//# sourceURL=webpack:///./src/download_subtitle.js?");
+module.exports = require("util");
 
 /***/ }),
 /* 11 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-"use strict";
-eval("\n\nObject.defineProperty(exports, \"__esModule\", {\n  value: true\n});\n\n/**\n * @typedef MovieTypeData\n * @property {string} type type of movie (title/release).\n * @property {string} lang language needed for the movie subtitle.\n * @property {string} body html response of search request.\n */\n/** @description handle's movies type (title/release).\n * @param {MovieTypeData} data\n  * @param {MovieTypeData} isPassive\n   @return {handleRelease|handleTitle}\n */\nvar handleType = function () {\n  var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(data, isPassive) {\n    var handleTitle, handler;\n    return regeneratorRuntime.wrap(function _callee$(_context) {\n      while (1) {\n        switch (_context.prev = _context.next) {\n          case 0:\n            handleTitle = isPassive ? _handle_title.getExactTitlePassive : _handle_title.getExactTitleList;\n            handler = data.type === 'release' ? _handle_release2.default : handleTitle;\n            return _context.abrupt('return', handler(data));\n\n          case 3:\n          case 'end':\n            return _context.stop();\n        }\n      }\n    }, _callee, this);\n  }));\n\n  return function handleType(_x, _x2) {\n    return _ref.apply(this, arguments);\n  };\n}();\n\nvar _handle_title = __webpack_require__(5);\n\nvar _handle_release = __webpack_require__(12);\n\nvar _handle_release2 = _interopRequireDefault(_handle_release);\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nfunction _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step(\"next\", value); }, function (err) { step(\"throw\", err); }); } } return step(\"next\"); }); }; }\n\nexports.default = handleType;\n\n//////////////////\n// WEBPACK FOOTER\n// ./src/handle_type.js\n// module id = 11\n// module chunks = 0\n\n//# sourceURL=webpack:///./src/handle_type.js?");
+module.exports = require("request");
 
 /***/ }),
 /* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\n\nObject.defineProperty(exports, \"__esModule\", {\n  value: true\n});\n\nvar _cheerio = __webpack_require__(6);\n\nvar _cheerio2 = _interopRequireDefault(_cheerio);\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nvar domain = 'https://subscene.com';\n\n/** @description responsible of handling movie subtitles of type release.\n * @param {string} data - pack\n   @return {Promise.<Array>}\n */\nfunction handleRelease(data) {\n  var $ = _cheerio2.default.load(data.body);\n  var releaseTable = $('table tbody tr');\n  var releaseLinks = Array.prototype.slice.call(releaseTable.map(function (index, value) {\n    var path = $(value).children('.a1').children('a').eq(0).attr('href');\n    var name = $(value).children('.a1').children('a').eq(0).children('span').eq(1).text().trim();\n    return {\n      name: name,\n      url: domain + path\n    };\n  }));\n  return releaseLinks;\n}\n\nexports.default = handleRelease;\n\n//////////////////\n// WEBPACK FOOTER\n// ./src/handle_release.js\n// module id = 12\n// module chunks = 0\n\n//# sourceURL=webpack:///./src/handle_release.js?");
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _cheerio = __webpack_require__(0);
+
+var _cheerio2 = _interopRequireDefault(_cheerio);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var domain = 'https://subscene.com';
+
+/** @description responsible of handling movie subtitles of type release.
+ * @param {string} data - pack
+   @return {Promise.<Array>}
+ */
+function handleRelease(data) {
+  var $ = _cheerio2.default.load(data.body);
+  var releaseTable = $('table tbody tr');
+  var releaseLinks = Array.prototype.slice.call(releaseTable.map(function (index, value) {
+    var path = $(value).children('.a1').children('a').eq(0).attr('href');
+    var name = $(value).children('.a1').children('a').eq(0).children('span').eq(1).text().trim();
+    return {
+      name: name,
+      url: domain + path
+    };
+  }));
+  return releaseLinks;
+}
+
+exports.default = handleRelease;
 
 /***/ }),
 /* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("__webpack_require__(14);\nmodule.exports = __webpack_require__(15);\n\n\n//////////////////\n// WEBPACK FOOTER\n// multi babel-polyfill ./src/main.js\n// module id = 13\n// module chunks = 0\n\n//# sourceURL=webpack:///multi_babel-polyfill_./src/main.js?");
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+/** @description responsible of downloading subtitle.
+ * @param {string} downloadURL - download link
+   @return {Promise.<Package>}
+ */
+var downloadSubtitle = function () {
+  var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(downloadURL) {
+    var op, response, filename, Package;
+    return regeneratorRuntime.wrap(function _callee$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
+            op = (0, _http_options2.default)(downloadURL, 'english', 'GET');
+
+            op.encoding = null;
+            _context.next = 4;
+            return (0, _req2.default)(op);
+
+          case 4:
+            response = _context.sent;
+            filename = response.headers['content-disposition'].split(';')[1].split('=')[1];
+            Package = {
+              filename: filename,
+              data: response.body
+            };
+            return _context.abrupt('return', Package);
+
+          case 8:
+          case 'end':
+            return _context.stop();
+        }
+      }
+    }, _callee, this);
+  }));
+
+  return function downloadSubtitle(_x) {
+    return _ref.apply(this, arguments);
+  };
+}();
+
+var _req = __webpack_require__(2);
+
+var _req2 = _interopRequireDefault(_req);
+
+var _http_options = __webpack_require__(1);
+
+var _http_options2 = _interopRequireDefault(_http_options);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
+exports.default = downloadSubtitle;
 
 /***/ }),
 /* 14 */
-/***/ (function(module, exports) {
-
-eval("module.exports = require(\"babel-polyfill\");\n\n//////////////////\n// WEBPACK FOOTER\n// external \"babel-polyfill\"\n// module id = 14\n// module chunks = 0\n\n//# sourceURL=webpack:///external_%22babel-polyfill%22?");
-
-/***/ }),
-/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\n\nObject.defineProperty(exports, \"__esModule\", {\n  value: true\n});\nexports.passiveDownloader = exports.interactiveDownloader = undefined;\n\n/**\n * @typedef MovieTypeData\n * @property {string} type type of movie (title/release).\n * @property {string} lang language needed for the movie subtitle.\n * @property {string} body html response of search request.\n */\n/** @description Detirmines movies type (title/release).\n * @param {string} filename - the name of the movie.\n * @param {string} lang - the language desired\n   @return {Promise.<MovieTypeData>}\n */\nvar determineMovieNameType = function () {\n  var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(filename, lang) {\n    var langCode, url, reqOptions, response, type;\n    return regeneratorRuntime.wrap(function _callee$(_context) {\n      while (1) {\n        switch (_context.prev = _context.next) {\n          case 0:\n            langCode = (0, _lang2.default)(lang);\n\n            if (langCode) {\n              _context.next = 3;\n              break;\n            }\n\n            return _context.abrupt('return', Promise.reject(new Error('language not supported!')));\n\n          case 3:\n            url = domain + '/subtitles/title?q=' + encodeURIComponent(filename);\n            reqOptions = (0, _http_options2.default)(url, lang, 'GET', '', true);\n            _context.next = 7;\n            return (0, _req2.default)(reqOptions);\n\n          case 7:\n            response = _context.sent;\n            type = response.request._redirect.redirects.length === 0 ? 'title' : 'release';\n            return _context.abrupt('return', { '_name': filename,\n              'type': type,\n              'lang': langCode,\n              'body': response.body });\n\n          case 10:\n          case 'end':\n            return _context.stop();\n        }\n      }\n    }, _callee, this);\n  }));\n\n  return function determineMovieNameType(_x, _x2) {\n    return _ref.apply(this, arguments);\n  };\n}();\n\n/** @description extract subtitle's download link.\n * @param {string} URL - the name of the movie.\n   @return {Promise.<string>}\n */\nvar getSubtitleDownloadLink = function () {\n  var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(URL) {\n    var url, response, $, downloadLink;\n    return regeneratorRuntime.wrap(function _callee2$(_context2) {\n      while (1) {\n        switch (_context2.prev = _context2.next) {\n          case 0:\n            // until we apply this to handleTitle\n            // it will always be an array.\n            url = Array.isArray(URL) ? URL[0] : URL;\n            _context2.next = 3;\n            return (0, _req2.default)((0, _http_options2.default)(url, 'GET', ''));\n\n          case 3:\n            response = _context2.sent;\n            $ = _cheerio2.default.load(response.body);\n            downloadLink = domain + $('.download a').attr('href');\n            return _context2.abrupt('return', downloadLink);\n\n          case 7:\n          case 'end':\n            return _context2.stop();\n        }\n      }\n    }, _callee2, this);\n  }));\n\n  return function getSubtitleDownloadLink(_x3) {\n    return _ref2.apply(this, arguments);\n  };\n}();\n\n/** @description main function.\n * @param {string} movieName - the name of the movie.\n * @param {string} language - the name of the movie.\n * @param {string} path - the name of the movie.\n   @return {Promise.<string>}\n */\n\n\nvar getMovieSubtitleDetails = function () {\n  var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(movieName, language) {\n    var movieInfo, result;\n    return regeneratorRuntime.wrap(function _callee3$(_context3) {\n      while (1) {\n        switch (_context3.prev = _context3.next) {\n          case 0:\n            _context3.next = 2;\n            return determineMovieNameType(movieName, language);\n\n          case 2:\n            movieInfo = _context3.sent;\n            _context3.next = 5;\n            return (0, _handle_type2.default)(movieInfo);\n\n          case 5:\n            result = _context3.sent;\n            return _context3.abrupt('return', {\n              type: movieInfo.type,\n              result: result\n            });\n\n          case 7:\n          case 'end':\n            return _context3.stop();\n        }\n      }\n    }, _callee3, this);\n  }));\n\n  return function getMovieSubtitleDetails(_x4, _x5) {\n    return _ref3.apply(this, arguments);\n  };\n}();\n\n/** @description download's subtitle passivly, choose's first subtitle found.\n* @param {string} movieName - the name of the movie.\n* @param {string} lang - the name of the movie.\n* @param {string} path - the name of the movie.\n  @return {Promise.<string>}\n*/\n\n\nvar passiveDownloader = function () {\n  var _ref4 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(movieName, lang, path) {\n    var language, movieInfo, movieURL, list, releaseURL, result, _releaseURL, _result;\n\n    return regeneratorRuntime.wrap(function _callee4$(_context4) {\n      while (1) {\n        switch (_context4.prev = _context4.next) {\n          case 0:\n            language = lang || 'english';\n            _context4.next = 3;\n            return getMovieSubtitleDetails(movieName, language);\n\n          case 3:\n            movieInfo = _context4.sent;\n\n            if (!(movieInfo.type === 'title')) {\n              _context4.next = 16;\n              break;\n            }\n\n            movieURL = chooseTitleMoviePassive(movieInfo.result); // 1\n\n            _context4.next = 8;\n            return (0, _handle_title.getTitleSubtitles)({ url: movieURL, lang: language });\n\n          case 8:\n            list = _context4.sent;\n            releaseURL = list[0].url; // 2\n\n            _context4.next = 12;\n            return downloadReleaseSubtitle(releaseURL, path);\n\n          case 12:\n            result = _context4.sent;\n            return _context4.abrupt('return', result);\n\n          case 16:\n            _releaseURL = movieInfo.result[0].url;\n            _context4.next = 19;\n            return downloadReleaseSubtitle(_releaseURL, path);\n\n          case 19:\n            _result = _context4.sent;\n            return _context4.abrupt('return', _result);\n\n          case 21:\n          case 'end':\n            return _context4.stop();\n        }\n      }\n    }, _callee4, this);\n  }));\n\n  return function passiveDownloader(_x6, _x7, _x8) {\n    return _ref4.apply(this, arguments);\n  };\n}();\n\n/** @description download's and save's subtitle of releaseURL.\n* @param {string} releaseURL - url of release.\n* @param {string} location - location to save.\n  @return {Object}\n*/\n\n\nvar downloadReleaseSubtitle = function () {\n  var _ref5 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee5(releaseURL, location) {\n    var downloadLink, file, unPackedFile;\n    return regeneratorRuntime.wrap(function _callee5$(_context5) {\n      while (1) {\n        switch (_context5.prev = _context5.next) {\n          case 0:\n            _context5.next = 2;\n            return getSubtitleDownloadLink(releaseURL);\n\n          case 2:\n            downloadLink = _context5.sent;\n            _context5.next = 5;\n            return (0, _download_subtitle2.default)(downloadLink);\n\n          case 5:\n            file = _context5.sent;\n            _context5.next = 8;\n            return (0, _unzip_sub_buffer2.default)(file);\n\n          case 8:\n            unPackedFile = _context5.sent;\n            _context5.next = 11;\n            return (0, _save_subtitle2.default)(location || '.', unPackedFile);\n\n          case 11:\n            return _context5.abrupt('return', _context5.sent);\n\n          case 12:\n          case 'end':\n            return _context5.stop();\n        }\n      }\n    }, _callee5, this);\n  }));\n\n  return function downloadReleaseSubtitle(_x9, _x10) {\n    return _ref5.apply(this, arguments);\n  };\n}();\n\n/** @description simple async emitter....\n* @param {string} emitter - the name of the movie.\n* @param {string} e - event.\n  @return {Object}\n*/\n\n\nvar _cheerio = __webpack_require__(6);\n\nvar _cheerio2 = _interopRequireDefault(_cheerio);\n\nvar _http_options = __webpack_require__(0);\n\nvar _http_options2 = _interopRequireDefault(_http_options);\n\nvar _handle_type = __webpack_require__(11);\n\nvar _handle_type2 = _interopRequireDefault(_handle_type);\n\nvar _download_subtitle = __webpack_require__(10);\n\nvar _download_subtitle2 = _interopRequireDefault(_download_subtitle);\n\nvar _unzip_sub_buffer = __webpack_require__(9);\n\nvar _unzip_sub_buffer2 = _interopRequireDefault(_unzip_sub_buffer);\n\nvar _save_subtitle = __webpack_require__(7);\n\nvar _save_subtitle2 = _interopRequireDefault(_save_subtitle);\n\nvar _lang = __webpack_require__(4);\n\nvar _lang2 = _interopRequireDefault(_lang);\n\nvar _req = __webpack_require__(2);\n\nvar _req2 = _interopRequireDefault(_req);\n\nvar _handle_title = __webpack_require__(5);\n\nvar _events = __webpack_require__(18);\n\nvar _events2 = _interopRequireDefault(_events);\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nfunction _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step(\"next\", value); }, function (err) { step(\"throw\", err); }); } } return step(\"next\"); }); }; }\n\nvar domain = 'https://subscene.com/';\nvar TitleOptions = Object.freeze(['Exact', 'Close', 'Popular', 'TV-Series']);;\n\n/** @description return's the first title in the available options\n  [exact,close,popular,tv-series].\n * @param {string} movieList - the name of the movie.\n   @return {String}\n */\nfunction chooseTitleMoviePassive(movieList) {\n  var i = 0;\n  for (var movieType in movieList) {\n    if (TitleOptions[i] === movieType) {\n      return movieList[movieType][0].link;\n    }\n    i += 1;\n  }\n}function asyncemit(emitter, e) {\n  for (var _len = arguments.length, params = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {\n    params[_key - 2] = arguments[_key];\n  }\n\n  return new Promise(function (resolve) {\n    emitter.emit.apply(emitter, [e].concat(params, [function (c) {\n      resolve(c);\n    }]));\n  });\n}\n/** @description download's subtitle passivly, choose's first subtitle found.\n* @param {string} movieName - the name of the movie.\n* @param {string} lang - the name of the movie.\n* @param {string} path - the name of the movie.\n  @return {Object}\n*/\nfunction interactiveDownloader(movieName, lang, path) {\n  var _this = this;\n\n  var emitter = new _events2.default();\n  process.nextTick(_asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee6() {\n    var language, movieInfo, titleURL, list, releaseURL, result, _releaseURL2, _result2;\n\n    return regeneratorRuntime.wrap(function _callee6$(_context6) {\n      while (1) {\n        switch (_context6.prev = _context6.next) {\n          case 0:\n            language = lang || 'english';\n            _context6.next = 3;\n            return getMovieSubtitleDetails(movieName, language);\n\n          case 3:\n            movieInfo = _context6.sent;\n\n            if (!(movieInfo.type === 'title')) {\n              _context6.next = 20;\n              break;\n            }\n\n            _context6.next = 7;\n            return asyncemit(emitter, 'info', movieInfo);\n\n          case 7:\n            titleURL = _context6.sent;\n            _context6.next = 10;\n            return (0, _handle_title.getTitleSubtitles)({ url: titleURL, lang: language });\n\n          case 10:\n            list = _context6.sent;\n            _context6.next = 13;\n            return asyncemit(emitter, 'title', list);\n\n          case 13:\n            releaseURL = _context6.sent;\n            _context6.next = 16;\n            return downloadReleaseSubtitle(releaseURL, path);\n\n          case 16:\n            result = _context6.sent;\n\n            emitter.emit('done', result, movieName);\n            _context6.next = 27;\n            break;\n\n          case 20:\n            _context6.next = 22;\n            return asyncemit(emitter, 'info', movieInfo);\n\n          case 22:\n            _releaseURL2 = _context6.sent;\n            _context6.next = 25;\n            return downloadReleaseSubtitle(_releaseURL2, path);\n\n          case 25:\n            _result2 = _context6.sent;\n\n            emitter.emit('done', _result2, movieName);\n\n          case 27:\n          case 'end':\n            return _context6.stop();\n        }\n      }\n    }, _callee6, _this);\n  })));\n  return emitter;\n}\n\nexports.interactiveDownloader = interactiveDownloader;\nexports.passiveDownloader = passiveDownloader;\n\n//////////////////\n// WEBPACK FOOTER\n// ./src/main.js\n// module id = 15\n// module chunks = 0\n\n//# sourceURL=webpack:///./src/main.js?");
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _path = __webpack_require__(5);
+
+var _path2 = _interopRequireDefault(_path);
+
+var _admZip = __webpack_require__(15);
+
+var _admZip2 = _interopRequireDefault(_admZip);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/** @description responsible of unpacking subtitles.
+ * @param {string} data - pack
+   @return {Promise.<Array>}
+ */
+function unzipSubtitleBuffer(data) {
+    return new Promise(function (resolve, reject) {
+        var files = [];
+        // if rar neglict .. ******FEATURE  Neeeded*****
+        if (_path2.default.extname(data.filename) == '.rar') {
+            files.push({ 'fileName': data.filename, 'data': data.data });
+            resolve(files);
+        }
+
+        try {
+            var zip = new _admZip2.default(data.data);
+            zip.getEntries().forEach(function (entry) {
+                var entryName = entry.entryName;
+                // decompressed buffer of the entry
+                var decompressedData = zip.readFile(entry);
+                files.push({ 'fileName': entryName, 'data': decompressedData });
+            });
+            resolve(files);
+        } catch (e) {
+            reject(new Error('Error while unzipping subtitle+\n' + e));
+        }
+    });
+}
+
+exports.default = unzipSubtitleBuffer;
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports) {
+
+module.exports = require("adm-zip");
 
 /***/ }),
 /* 16 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-eval("module.exports = require(\"fs\");\n\n//////////////////\n// WEBPACK FOOTER\n// external \"fs\"\n// module id = 16\n// module chunks = 0\n\n//# sourceURL=webpack:///external_%22fs%22?");
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _path = __webpack_require__(5);
+
+var _path2 = _interopRequireDefault(_path);
+
+var _fs = __webpack_require__(17);
+
+var _fs2 = _interopRequireDefault(_fs);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
+/** @description responsible of saving subtitle files to disk.
+ * @param {string} savePath - location to save file.
+ * @param {array} files - array of subtitle files.
+   @return {Promise.<log>}
+ */
+function saveSubtitle(savePath, files) {
+    return new Promise(function () {
+        var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(resolve, reject) {
+            var log;
+            return regeneratorRuntime.wrap(function _callee$(_context) {
+                while (1) {
+                    switch (_context.prev = _context.next) {
+                        case 0:
+                            log = [];
+
+                            files.map(function (file, n) {
+                                var saveFile = _path2.default.join(savePath, file.fileName);
+                                _fs2.default.writeFile(saveFile, file.data, function (err) {
+                                    if (err) {
+                                        reject(err);
+                                    } else {
+                                        log.push(saveFile);
+                                    }
+                                    if (n == files.length - 1) {
+                                        resolve(log);
+                                    }
+                                });
+                            });
+
+                        case 2:
+                        case 'end':
+                            return _context.stop();
+                    }
+                }
+            }, _callee, this);
+        }));
+
+        return function (_x, _x2) {
+            return _ref.apply(this, arguments);
+        };
+    }());
+}
+
+exports.default = saveSubtitle;
 
 /***/ }),
 /* 17 */
 /***/ (function(module, exports) {
 
-eval("module.exports = require(\"adm-zip\");\n\n//////////////////\n// WEBPACK FOOTER\n// external \"adm-zip\"\n// module id = 17\n// module chunks = 0\n\n//# sourceURL=webpack:///external_%22adm-zip%22?");
+module.exports = require("fs");
 
 /***/ }),
 /* 18 */
 /***/ (function(module, exports) {
 
-eval("module.exports = require(\"events\");\n\n//////////////////\n// WEBPACK FOOTER\n// external \"events\"\n// module id = 18\n// module chunks = 0\n\n//# sourceURL=webpack:///external_%22events%22?");
+module.exports = require("events");
 
 /***/ })
 /******/ ]);
