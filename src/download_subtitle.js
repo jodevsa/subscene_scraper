@@ -1,29 +1,23 @@
 'use strict';
 
-const {promisify} = require('util');
-const req = promisify(require('request'));
-const httpOptions = require('./http_options');
+import req from './req';
+import httpOptions from './http_options';
 
 /** @description responsible of downloading subtitle.
- * @param {string} link - download link
+ * @param {string} downloadURL - download link
    @return {Promise.<Package>}
  */
-function downloadSubtitle(link) {
-    return new Promise(async function(resolve, reject) {
-        let op = httpOptions(link, '', 'GET');
-        op.encoding = null;
-        try {
-            let response = await req(op);
-            let Package = {
-                filename: response
-                .headers['content-disposition'].split(';')[1].split('=')[1],
-                data: response.body,
-            };
-            resolve(Package);
-        } catch (e) {
-            reject(e);
-        }
-    });
+async function downloadSubtitle(downloadURL) {
+  const op = httpOptions(downloadURL, 'english', 'GET');
+  op.encoding = null;
+  const response = await req(op);
+  const filename=response.headers['content-disposition']
+  .split(';')[1].split('=')[1];
+  let Package = {
+    filename: filename,
+    data: response.body,
+  };
+  return Package;
 }
 
 module.exports = downloadSubtitle;

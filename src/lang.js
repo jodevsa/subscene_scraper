@@ -1,6 +1,6 @@
 'use strict';
 
-const languageSet = {
+const languageSet =Object.freeze({
     'arabic': '2',
     'brazillianportuguese': '4',
     'danish': '10',
@@ -71,7 +71,7 @@ const languageSet = {
     'turkish': '41',
     'urdu': '42',
     'ukrainian': '56',
-};
+});
 
 /** @description map string language with it's subscene langCode.
  * @param {string} lang - location to save file.

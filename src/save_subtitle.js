@@ -1,7 +1,7 @@
-'use stric';
+'use strict';
 
-const fs = require('fs');
-const path = require('path');
+import path from 'path';
+import fs from 'fs';
 
 /** @description responsible of saving subtitle files to disk.
  * @param {string} savePath - location to save file.
@@ -10,7 +10,7 @@ const path = require('path');
  */
 function saveSubtitle(savePath, files) {
     return new Promise(async function(resolve, reject) {
-        let log = [];
+        const log = [];
         files.map(function(file, n) {
             let saveFile = path.join(savePath, file.fileName);
             fs.writeFile(saveFile, file.data, function(err) {

@@ -1,7 +1,7 @@
 'use strict';
 
-const AdmZip = require('adm-zip');
-const path = require('path');
+import path from 'path';
+import AdmZip from 'adm-zip';
 
 /** @description responsible of unpacking subtitles.
  * @param {string} data - pack
@@ -9,15 +9,15 @@ const path = require('path');
  */
 function unzipSubtitleBuffer(data) {
     return new Promise(function(resolve, reject) {
-        let files = [];
-        // if rar neglict .. ******ISSUE*****
+        const files = [];
+        // if rar neglict .. ******FEATURE  Neeeded*****
         if (path.extname(data.filename) == '.rar') {
             files.push({'fileName': data.filename, 'data': data.data});
             resolve(files);
         }
 
         try {
-            let zip = new AdmZip(data.data);
+            const zip = new AdmZip(data.data);
             zip.getEntries().forEach(function(entry) {
                 let entryName = entry.entryName;
                 // decompressed buffer of the entry

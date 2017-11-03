@@ -1,6 +1,6 @@
 var nodeExternals = require('webpack-node-externals');
 const path = require('path')
-module.exports = {
+const config = {
     entry: [
         "babel-polyfill", "./src/main.js"
     ],
@@ -26,3 +26,8 @@ module.exports = {
         ]
     }
 };
+if (process.env.WEBPACK_ENV === "dev") {
+  config.devtool="eval";
+}
+
+module.exports=config;

@@ -1,7 +1,7 @@
 'use strict';
 
-const handleTitle = require('./handle_title');
-const handleRelease = require('./handle_release');
+import {getExactTitleList, getExactTitlePassive} from './handle_title';
+import handleRelease from './handle_release';
 /**
  * @typedef MovieTypeData
  * @property {string} type type of movie (title/release).
@@ -10,9 +10,11 @@ const handleRelease = require('./handle_release');
  */
 /** @description handle's movies type (title/release).
  * @param {MovieTypeData} data
+  * @param {MovieTypeData} isPassive
    @return {handleRelease|handleTitle}
  */
-function handleType(data) {
+async function handleType(data, isPassive) {
+    const handleTitle=isPassive?getExactTitlePassive:getExactTitleList;
     const handler=data.type === 'release' ? handleRelease : handleTitle;
     return handler(data);
 }
