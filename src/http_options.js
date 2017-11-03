@@ -33,4 +33,4 @@ function genHttpOptions(URL, lang, method, body, followRedirect) {
     return settings;
 }
 
-module.exports = genHttpOptions;
+export default genHttpOptions;

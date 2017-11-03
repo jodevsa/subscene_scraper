@@ -20,4 +20,4 @@ async function downloadSubtitle(downloadURL) {
   return Package;
 }
 
-module.exports = downloadSubtitle;
+export default downloadSubtitle;

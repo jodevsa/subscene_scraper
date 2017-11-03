@@ -24,4 +24,4 @@ function handleRelease(data) {
   return releaseLinks;
 }
 
-module.exports = handleRelease;
+export default handleRelease;

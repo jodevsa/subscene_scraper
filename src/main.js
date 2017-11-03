@@ -11,12 +11,12 @@ import req from './req';
 import {getTitleSubtitles} from './handle_title';
 
 const domain = 'https://subscene.com/';
-const TitleOptions = [
+const TitleOptions = Object.freeze([
       'Exact',
       'Close',
       'Popular',
     'TV-Series',
-];
+]);
 
 /**
  * @typedef MovieTypeData
@@ -30,15 +30,14 @@ const TitleOptions = [
    @return {Promise.<MovieTypeData>}
  */
 async function determineMovieNameType(filename, lang) {
-  let langCode = getLangCode(lang);
+  const langCode = getLangCode(lang);
   if (!langCode) {
     return Promise.reject(new Error('language not supported!'));
   }
-
   const url = domain + '/subtitles/title?q=' + encodeURIComponent(filename);
   const reqOptions = genHttpOptions(url, lang, 'GET', '', true);
   const response = await req(reqOptions);
-  let type = response.request._redirect.redirects.length === 0
+  const type = response.request._redirect.redirects.length === 0
     ? 'title'
     : 'release';
   return {'_name': filename,
@@ -67,15 +66,15 @@ function chooseTitleMoviePassive(movieList) {
    @return {Promise.<string>}
  */
 async function getSubtitleDownloadLink(URL) {
-    // until we apply this to handleTitle
-    // it will always be an array.
-    const url = Array.isArray(URL)
-        ? URL[0]
-        : URL;
-    const response = await req(genHttpOptions(url, 'GET', ''));
-    let $ = cheerio.load(response.body);
-    let downloadLink = domain + $('.download a').attr('href');
-    return downloadLink;
+  // until we apply this to handleTitle
+  // it will always be an array.
+  const url = Array.isArray(URL) ?
+    URL[0] :
+    URL;
+  const response = await req(genHttpOptions(url, 'GET', ''));
+  let $ = cheerio.load(response.body);
+  let downloadLink = domain + $('.download a').attr('href');
+  return downloadLink;
 }
 
 /** @description main function.
@@ -84,11 +83,14 @@ async function getSubtitleDownloadLink(URL) {
  * @param {string} path - the name of the movie.
    @return {Promise.<string>}
  */
- async function getMovieSubtitleDetails(movieName, language) {
-         let movieInfo = await determineMovieNameType(movieName, language);
-         let result = await handleType(movieInfo);
-         return {type: movieInfo.type, result: result};
-       }
+async function getMovieSubtitleDetails(movieName, language) {
+  let movieInfo = await determineMovieNameType(movieName, language);
+  let result = await handleType(movieInfo);
+  return {
+    type: movieInfo.type,
+    result: result,
+  };
+}
 
 
 /** @description download's subtitle passivly, choose's first subtitle found.
@@ -125,8 +127,7 @@ async function downloadReleaseSubtitle(releaseURL, location) {
   return await saveSubtitle(location || '.', unPackedFile);
 }
 
-
-exports.passiveDownloader = passiveDownloader;
-exports.downloadReleaseSubtitle = downloadReleaseSubtitle;
-exports.getTitleSubtitles = getTitleSubtitles;
-exports.getMovieSubtitleDetails = getMovieSubtitleDetails;
+export {passiveDownloader,
+        downloadReleaseSubtitle,
+        getTitleSubtitles,
+        getMovieSubtitleDetails};

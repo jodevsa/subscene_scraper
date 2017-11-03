@@ -38,4 +38,4 @@ async function req(options) {
   return response;
 }
 
-module.exports = req;
+export default req;

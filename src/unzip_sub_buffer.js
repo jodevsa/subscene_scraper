@@ -19,9 +19,9 @@ function unzipSubtitleBuffer(data) {
         try {
             const zip = new AdmZip(data.data);
             zip.getEntries().forEach(function(entry) {
-                let entryName = entry.entryName;
+                const entryName = entry.entryName;
                 // decompressed buffer of the entry
-                let decompressedData = zip.readFile(entry);
+                const decompressedData = zip.readFile(entry);
                 files.push({'fileName': entryName, 'data': decompressedData});
             });
             resolve(files);
@@ -31,4 +31,4 @@ function unzipSubtitleBuffer(data) {
     });
 }
 
-module.exports = unzipSubtitleBuffer;
+export default unzipSubtitleBuffer;

@@ -77,6 +77,10 @@ module.exports = require("cheerio");
 "use strict";
 
 
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
 var _lang = __webpack_require__(3);
 
 var _lang2 = _interopRequireDefault(_lang);
@@ -113,7 +117,7 @@ function genHttpOptions(URL, lang, method, body, followRedirect) {
     return settings;
 }
 
-module.exports = genHttpOptions;
+exports.default = genHttpOptions;
 
 /***/ }),
 /* 2 */
@@ -121,6 +125,10 @@ module.exports = genHttpOptions;
 
 "use strict";
 
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 
 /** @description wrapper around a promisifed request function that retries.
  * @param {Object} options - request optipons.
@@ -209,9 +217,7 @@ function sleep(seconds) {
       resolve(seconds);
     }, seconds);
   });
-}
-
-module.exports = req;
+}exports.default = req;
 
 /***/ }),
 /* 3 */
@@ -220,6 +226,9 @@ module.exports = req;
 "use strict";
 
 
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
 var languageSet = Object.freeze({
     'arabic': '2',
     'brazillianportuguese': '4',
@@ -306,7 +315,7 @@ function getLanguageCode(lang) {
     }
 }
 
-module.exports = getLanguageCode;
+exports.default = getLanguageCode;
 
 /***/ }),
 /* 4 */
@@ -561,6 +570,11 @@ module.exports = require("babel-polyfill");
 "use strict";
 
 
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.getMovieSubtitleDetails = exports.getTitleSubtitles = exports.downloadReleaseSubtitle = exports.passiveDownloader = undefined;
+
 /**
  * @typedef MovieTypeData
  * @property {string} type type of movie (title/release).
@@ -676,7 +690,10 @@ var getMovieSubtitleDetails = function () {
 
           case 5:
             result = _context3.sent;
-            return _context3.abrupt('return', { type: movieInfo.type, result: result });
+            return _context3.abrupt('return', {
+              type: movieInfo.type,
+              result: result
+            });
 
           case 7:
           case 'end':
@@ -842,7 +859,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
 var domain = 'https://subscene.com/';
-var TitleOptions = ['Exact', 'Close', 'Popular', 'TV-Series'];;
+var TitleOptions = Object.freeze(['Exact', 'Close', 'Popular', 'TV-Series']);;
 
 /** @description return's the first title in the available options
   [exact,close,popular,tv-series].
@@ -857,9 +874,7 @@ function chooseTitleMoviePassive(movieList) {
     }
     i += 1;
   }
-}
-
-exports.passiveDownloader = passiveDownloader;
+}exports.passiveDownloader = passiveDownloader;
 exports.downloadReleaseSubtitle = downloadReleaseSubtitle;
 exports.getTitleSubtitles = _handle_title.getTitleSubtitles;
 exports.getMovieSubtitleDetails = getMovieSubtitleDetails;
@@ -870,6 +885,10 @@ exports.getMovieSubtitleDetails = getMovieSubtitleDetails;
 
 "use strict";
 
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 
 /**
  * @typedef MovieTypeData
@@ -916,7 +935,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
-module.exports = handleType;
+exports.default = handleType;
 
 /***/ }),
 /* 10 */
@@ -936,6 +955,10 @@ module.exports = require("request");
 
 "use strict";
 
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 
 var _cheerio = __webpack_require__(0);
 
@@ -963,7 +986,7 @@ function handleRelease(data) {
   return releaseLinks;
 }
 
-module.exports = handleRelease;
+exports.default = handleRelease;
 
 /***/ }),
 /* 13 */
@@ -971,6 +994,10 @@ module.exports = handleRelease;
 
 "use strict";
 
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 
 /** @description responsible of downloading subtitle.
  * @param {string} downloadURL - download link
@@ -1023,7 +1050,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
-module.exports = downloadSubtitle;
+exports.default = downloadSubtitle;
 
 /***/ }),
 /* 14 */
@@ -1031,6 +1058,10 @@ module.exports = downloadSubtitle;
 
 "use strict";
 
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
 
 var _path = __webpack_require__(5);
 
@@ -1070,7 +1101,7 @@ function unzipSubtitleBuffer(data) {
     });
 }
 
-module.exports = unzipSubtitleBuffer;
+exports.default = unzipSubtitleBuffer;
 
 /***/ }),
 /* 15 */
@@ -1084,6 +1115,10 @@ module.exports = require("adm-zip");
 
 "use strict";
 
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
 
 var _path = __webpack_require__(5);
 
@@ -1140,7 +1175,7 @@ function saveSubtitle(savePath, files) {
     }());
 }
 
-module.exports = saveSubtitle;
+exports.default = saveSubtitle;
 
 /***/ }),
 /* 17 */

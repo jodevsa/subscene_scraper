@@ -12,7 +12,7 @@ function saveSubtitle(savePath, files) {
     return new Promise(async function(resolve, reject) {
         const log = [];
         files.map(function(file, n) {
-            let saveFile = path.join(savePath, file.fileName);
+            const saveFile = path.join(savePath, file.fileName);
             fs.writeFile(saveFile, file.data, function(err) {
                 if (err) {
                     reject(err);
@@ -27,4 +27,4 @@ function saveSubtitle(savePath, files) {
     });
 }
 
-module.exports = saveSubtitle;
+export default saveSubtitle;

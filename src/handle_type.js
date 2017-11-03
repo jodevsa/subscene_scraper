@@ -19,4 +19,4 @@ async function handleType(data, isPassive) {
     return handler(data);
 }
 
-module.exports = handleType;
+export default handleType;

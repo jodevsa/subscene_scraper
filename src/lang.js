@@ -86,4 +86,4 @@ function getLanguageCode(lang) {
     }
 }
 
-module.exports = getLanguageCode;
+export default getLanguageCode;
