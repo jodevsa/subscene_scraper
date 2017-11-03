@@ -9,6 +9,7 @@ import saveSubtitle from './save_subtitle';
 import getLangCode from './lang';
 import req from './req';
 import {getTitleSubtitles} from './handle_title';
+import EventEmitter from 'events';
 
 const domain = 'https://subscene.com/';
 const TitleOptions = Object.freeze([
@@ -103,9 +104,9 @@ async function passiveDownloader(movieName, lang, path) {
   const language = lang || 'english';
   const movieInfo = await getMovieSubtitleDetails(movieName, language);
   if (movieInfo.type === 'title') {
-    const movieURL = chooseTitleMoviePassive(movieInfo.result);
+    const movieURL = chooseTitleMoviePassive(movieInfo.result); // 1
     const list = await getTitleSubtitles({url: movieURL, lang: language});
-    const releaseURL = list[0].url;
+    const releaseURL = list[0].url; // 2
     const result = await downloadReleaseSubtitle(releaseURL, path);
     return result;
   } else {
@@ -127,7 +128,43 @@ async function downloadReleaseSubtitle(releaseURL, location) {
   return await saveSubtitle(location || '.', unPackedFile);
 }
 
-export {passiveDownloader,
-        downloadReleaseSubtitle,
-        getTitleSubtitles,
-        getMovieSubtitleDetails};
+/** @description simple async emitter....
+* @param {string} emitter - the name of the movie.
+* @param {string} e - event.
+  @return {Object}
+*/
+function asyncemit(emitter, e, ...params) {
+  return new Promise((resolve)=>{
+    emitter.emit(e, ...params, (c)=>{
+      resolve(c);
+    });
+  });
+}
+/** @description download's subtitle passivly, choose's first subtitle found.
+* @param {string} movieName - the name of the movie.
+* @param {string} lang - the name of the movie.
+* @param {string} path - the name of the movie.
+  @return {Object}
+*/
+function interactiveDownloader(movieName, lang, path) {
+  let emitter = new EventEmitter();
+  process.nextTick(async ()=>{
+  const language = lang || 'english';
+  const movieInfo = await getMovieSubtitleDetails(movieName, language);
+  if (movieInfo.type === 'title') {
+    const titleURL=await asyncemit(emitter, 'info', movieInfo);
+    const list = await getTitleSubtitles({url: titleURL, lang: language});
+    const releaseURL =await asyncemit(emitter, 'title', list);
+    const result = await downloadReleaseSubtitle(releaseURL, path);
+    emitter.emit('done', result, movieName);
+  } else {
+    const releaseURL=await asyncemit(emitter, 'info', movieInfo);
+    const result = await downloadReleaseSubtitle(releaseURL, path);
+    emitter.emit('done', result, movieName);
+  }
+});
+  return emitter;
+}
+
+export {interactiveDownloader,
+        passiveDownloader};
