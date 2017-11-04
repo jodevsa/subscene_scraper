@@ -10,8 +10,7 @@
 #### re-written  in ES7
 #### fixed various bugs.
 ## Installation
-
-### npm install subscene_scraper
+  npm install subscene_scraper --save
 
 ## Usage:
 
@@ -40,6 +39,8 @@
     //title subtiles have 2 steps (1) chooseTitle (2) chooseRelease
     // release subtitles have 1 step (1) chooseRelease
     // you'll have to implement chooseTitleSubtitle,chooseReleaseSubtitle functions.
+    var subscene_scraper=require('subscene_scraper');
+    var interactiveDownloader=subscene_scraper.interactiveDownloader;
     const downloader = interactiveDownloader(movieName, language, saveLocation);
     downloader.on('info', async (info, choose) => {
       if (info.type === 'title') {
