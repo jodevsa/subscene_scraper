@@ -7,17 +7,16 @@ import httpOptions from './http_options';
  * @param {string} downloadURL - download link
    @return {Promise.<Package>}
  */
-async function downloadSubtitle(downloadURL) {
-  const op = httpOptions(downloadURL, 'english', 'GET');
+async function downloadSubtitle(downloadURL,lang) {
+  const op = httpOptions(downloadURL, lang, 'GET');
   op.encoding = null;
   const response = await req(op);
-  const filename=response.headers['content-disposition']
-  .split(';')[1].split('=')[1];
-  let Package = {
-    filename: filename,
-    data: response.body,
+  const name = response.headers['content-disposition']
+    .split(';')[1].split('=')[1];
+  return {
+    name,
+    buffer: response.body,
   };
-  return Package;
 }
 
 export default downloadSubtitle;

@@ -2,7 +2,7 @@
 
 import cheerio from 'cheerio';
 
-const domain = 'https://subscene.com';
+import {BASE_URI} from './options.json';
 
 /** @description responsible of handling movie subtitles of type release.
  * @param {string} data - pack
@@ -18,7 +18,7 @@ function handleRelease(data) {
     .eq(0).children('span').eq(1).text().trim();
     return {
       name: name,
-      url: (domain + path),
+      url: (BASE_URI + path),
     };
   }));
   return releaseLinks;

@@ -3,8 +3,8 @@
 import cheerio from 'cheerio';
 import httpOptions from './http_options';
 import req from './req';
+import {BASE_URI} from './options.json';
 
-const domain = 'https://subscene.com';
 const TitleOptions = ['Exact', 'Close', 'Popular', 'TV-Series'];
 
 /** @description responsible of choosing first title movie! when in passive
@@ -16,7 +16,7 @@ function chooseTitleMoviePassive(movieList) {
   let i = 0;
   for (const movieType in movieList) {
     if (TitleOptions[i] === movieType) {
-      return domain + movieList[movieType][0].link;
+      return BASE_URI + movieList[movieType][0].link;
     }
     i += 1;
   }
@@ -64,7 +64,7 @@ async function getTitleSubtitles(data) {
     const releaseName = $(val).children('a')
     .children('span').eq(1).text().trim();
     subtitles.push({
-      url: domain + releaseUrl,
+      url: BASE_URI + releaseUrl,
       name: releaseName,
     });
   });
@@ -87,7 +87,7 @@ async function getTitles(data) {
       $(value).children('div .title').children('a').map((n, Movie) => {
         const val = {
           name: $(Movie).text(),
-          link: domain + $(Movie).attr('href'),
+          link: BASE_URI + $(Movie).attr('href'),
         };
 
         movieTitleList[header].push(val);

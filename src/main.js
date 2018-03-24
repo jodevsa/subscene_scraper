@@ -10,14 +10,9 @@ import getLangCode from './lang';
 import req from './req';
 import {getTitleSubtitles} from './handle_title';
 import EventEmitter from 'events';
+import {BASE_URI} from './options.json'
 
-const domain = 'https://subscene.com/';
-const TitleOptions = Object.freeze([
-      'Exact',
-      'Close',
-      'Popular',
-    'TV-Series',
-]);
+const TitleOptions = Object.freeze(['Exact', 'Close', 'Popular', 'TV-Series']);
 
 /**
  * @typedef MovieTypeData
@@ -35,16 +30,13 @@ async function determineMovieNameType(filename, lang) {
   if (!langCode) {
     return Promise.reject(new Error('language not supported!'));
   }
-  const url = domain + '/subtitles/title?q=' + encodeURIComponent(filename);
+  const url = BASE_URI + '/subtitles/title?q=' + encodeURIComponent(filename);
   const reqOptions = genHttpOptions(url, lang, 'GET', '', true);
   const response = await req(reqOptions);
   const type = response.request._redirect.redirects.length === 0
     ? 'title'
     : 'release';
-  return {'_name': filename,
-          'type': type,
-          'lang': langCode,
-          'body': response.body};
+  return {'_name': filename, 'type': type, 'lang': langCode, 'body': response.body};
 };
 
 /** @description return's the first title in the available options
@@ -53,12 +45,12 @@ async function determineMovieNameType(filename, lang) {
    @return {String}
  */
 function chooseTitleMoviePassive(movieList) {
-  let i=0;
+  let i = 0;
   for (const movieType in movieList) {
     if (TitleOptions[i] === movieType) {
       return movieList[movieType][0].link;
     }
-    i+=1;
+    i += 1;
   }
 }
 
@@ -66,15 +58,15 @@ function chooseTitleMoviePassive(movieList) {
  * @param {string} URL - the name of the movie.
    @return {Promise.<string>}
  */
-async function getSubtitleDownloadLink(URL) {
+async function getSubtitleDownloadLink(URL, lang) {
   // until we apply this to handleTitle
   // it will always be an array.
-  const url = Array.isArray(URL) ?
-    URL[0] :
-    URL;
-  const response = await req(genHttpOptions(url, 'GET', ''));
+  const url = Array.isArray(URL)
+    ? URL[0]
+    : URL;
+  const response = await req(genHttpOptions(url, lang, 'GET'));
   let $ = cheerio.load(response.body);
-  let downloadLink = domain + $('.download a').attr('href');
+  let downloadLink = BASE_URI + $('.download a').attr('href');
   return downloadLink;
 }
 
@@ -87,33 +79,7 @@ async function getSubtitleDownloadLink(URL) {
 async function getMovieSubtitleDetails(movieName, language) {
   let movieInfo = await determineMovieNameType(movieName, language);
   let result = await handleType(movieInfo);
-  return {
-    type: movieInfo.type,
-    result: result,
-  };
-}
-
-
-/** @description download's subtitle passivly, choose's first subtitle found.
-* @param {string} movieName - the name of the movie.
-* @param {string} lang - the name of the movie.
-* @param {string} path - the name of the movie.
-  @return {Promise.<string>}
-*/
-async function passiveDownloader(movieName, lang, path) {
-  const language = lang || 'english';
-  const movieInfo = await getMovieSubtitleDetails(movieName, language);
-  if (movieInfo.type === 'title') {
-    const movieURL = chooseTitleMoviePassive(movieInfo.result); // 1
-    const list = await getTitleSubtitles({url: movieURL, lang: language});
-    const releaseURL = list[0].url; // 2
-    const result = await downloadReleaseSubtitle(releaseURL, path);
-    return result;
-  } else {
-    const releaseURL = movieInfo.result[0].url;
-    const result = await downloadReleaseSubtitle(releaseURL, path);
-    return result;
-  }
+  return {type: movieInfo.type, result: result};
 }
 
 /** @description download's and save's subtitle of releaseURL.
@@ -121,11 +87,11 @@ async function passiveDownloader(movieName, lang, path) {
 * @param {string} location - location to save.
   @return {Object}
 */
-async function downloadReleaseSubtitle(releaseURL, location) {
-  const downloadLink = await getSubtitleDownloadLink(releaseURL);
-  const file = await downloadSubtitle(downloadLink);
-  const unPackedFile = await unzipSubtitleBuffer(file);
-  return await saveSubtitle(location || '.', unPackedFile);
+async function downloadSubtitleFiles(releaseURL, location, lang) {
+  const downloadLink = await getSubtitleDownloadLink(releaseURL, lang);
+  const subtitleFile = await downloadSubtitle(downloadLink);
+  const subtitlePackage = await unzipSubtitleBuffer(subtitleFile);
+  return subtitlePackage;
 }
 
 /** @description simple async emitter....
@@ -134,12 +100,17 @@ async function downloadReleaseSubtitle(releaseURL, location) {
   @return {Object}
 */
 function asyncemit(emitter, e, ...params) {
-  return new Promise((resolve)=>{
-    emitter.emit(e, ...params, (c)=>{
+  return new Promise((resolve) => {
+    emitter.emit(e, ...params, (c) => {
       resolve(c);
     });
   });
 }
+
+///////////////////////////////////////////////////////////////////////////////
+////////// section: exported methods ///////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+
 /** @description download's subtitle passivly, choose's first subtitle found.
 * @param {string} movieName - the name of the movie.
 * @param {string} lang - the name of the movie.
@@ -148,23 +119,60 @@ function asyncemit(emitter, e, ...params) {
 */
 function interactiveDownloader(movieName, lang, path) {
   let emitter = new EventEmitter();
-  process.nextTick(async ()=>{
-  const language = lang || 'english';
-  const movieInfo = await getMovieSubtitleDetails(movieName, language);
-  if (movieInfo.type === 'title') {
-    const titleURL=await asyncemit(emitter, 'info', movieInfo);
-    const list = await getTitleSubtitles({url: titleURL, lang: language});
-    const releaseURL =await asyncemit(emitter, 'title', list);
-    const result = await downloadReleaseSubtitle(releaseURL, path);
-    emitter.emit('done', result, movieName);
-  } else {
-    const releaseURL=await asyncemit(emitter, 'info', movieInfo);
-    const result = await downloadReleaseSubtitle(releaseURL, path);
-    emitter.emit('done', result, movieName);
-  }
-});
+  process.nextTick(async () => {
+    const language = lang || 'english';
+    const movieInfo = await getMovieSubtitleDetails(movieName, language);
+    let url;
+    if (movieInfo.type === 'title') {
+      const titleURL = await asyncemit(emitter, 'info', movieInfo);
+      const list = await getTitleSubtitles({url: titleURL, lang: language});
+      url = await asyncemit(emitter, 'title', list);
+    } else {
+      url = await asyncemit(emitter, 'info', movieInfo);
+    }
+    const unPackedSubtitles = await downloadSubtitleFiles(url, path, lang);
+    if (arguments.length === 3) {
+      result = await saveSubtitle(path || '.', unPackedSubtitles);
+      emitter.emit('done', result, movieName);
+    } else {
+      emitter.emit('done', unPackedSubtitles, movieName);
+    }
+  });
   return emitter;
 }
 
-export {interactiveDownloader,
-        passiveDownloader};
+/** @description download's subtitle passivly, choose's first subtitle found.
+* @param {string} movieName - the name of the movie.
+* @param {string} lang - the name of the movie.
+* @param {string} path - the name of the movie.
+  @return {Promise.<string>}
+*/
+async function passiveDownloader(movieName, lang, path, options = {}) {
+  const language = lang || 'english';
+  const movieInfo = await getMovieSubtitleDetails(movieName, language);
+  let url;
+  if (movieInfo.type === 'title') {
+    const movieURL = chooseTitleMoviePassive(movieInfo.result); // 1
+    const list = await getTitleSubtitles({url: movieURL, lang: language});
+    url = list[0].url; // 2
+  } else {
+    //passiveDownloader always picks the first result.
+    //use the interactiveDownloader if you have a special uescase.
+    url = movieInfo.result[0].url;
+  }
+  const result = await downloadSubtitleFiles(url, path, lang);
+  if (arguments.length === 3) {
+    return await saveSubtitle(path || '.', result);
+  }
+
+  return result;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+////////// end of exported methods section /////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+
+export {
+  interactiveDownloader,
+  passiveDownloader
+};

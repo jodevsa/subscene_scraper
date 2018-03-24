@@ -24,6 +24,7 @@ function sleep(seconds) {
    @return {Respones}
 */
 async function req(options) {
+  console.log(1000)
   let response = await reqP(options);
   let i = 0;
   while (response.statusCode === blockCode && i < retry) {
