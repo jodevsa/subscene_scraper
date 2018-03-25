@@ -4,7 +4,7 @@
   "description": "Automate subtitle downloading from subscene.com",
   "main": "./dist/main.bundle.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest -v",
     "build": "eslint src/* && WEBPACK_ENV=build webpack --progress --colors",
     "dev": "WEBPACK_ENV=dev webpack --progress --colors --watch",
     "eslint": "watch -n 1 eslint src/"
@@ -45,8 +45,10 @@
   },
   "dependencies": {
     "adm-zip": "^0.4.7",
+    "babel-jest": "^22.4.3",
     "babel-polyfill": "^6.26.0",
     "cheerio": "^1.0.0-rc.2",
+    "jest": "^22.4.3",
     "request": "^2.83.0",
     "util.promisify": "^1.0.0"
   }

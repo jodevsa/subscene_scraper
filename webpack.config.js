@@ -17,18 +17,7 @@ const config = {
         test: /\.js$/,
         exclude: [/node_modules/],
         use: {
-          loader: 'babel-loader',
-          options: {
-            presets: [
-              [
-                "env", {
-                  "targets": {
-                    "node": "4"
-                  }
-                }
-              ]
-            ]
-          }
+          loader: 'babel-loader'
         }
       }
     ]
