@@ -24,10 +24,10 @@ function sleep(seconds) {
    @return {Respones}
 */
 async function req(options) {
-  console.log(1000)
   let response = await reqP(options);
   let i = 0;
   while (response.statusCode === blockCode && i < retry) {
+    console.log("retry")
     await sleep(sleeptime);
     response = await reqP(options);
     i += 1;

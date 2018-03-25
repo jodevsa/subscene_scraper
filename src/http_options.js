@@ -12,7 +12,7 @@ import {baseHttpOptions} from './options.json';
    @return {Promise.<Object>}
  */
 function genHttpOptions(url='', lang='english', method='GET', body='', followRedirect=false) {
-  
+
   let settings = {
     ...baseHttpOptions,
     headers:{...baseHttpOptions.headers},
@@ -21,7 +21,6 @@ function genHttpOptions(url='', lang='english', method='GET', body='', followRed
     body
   }
   settings.headers.Cookie += (getLanguageCode(lang));
-  console.log(lang,getLanguageCode(lang))
   return settings;
 }
 
