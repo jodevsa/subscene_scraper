@@ -35,9 +35,8 @@ async function determineMovieNameType(filename, lang) {
   if (!langCode) {
     return Promise.reject(new Error('language not supported!'));
   }
-  const url = domain + '/subtitles/title?q=' + encodeURIComponent(filename);
-  const reqOptions = genHttpOptions(url, lang, 'GET', '', true);
-  const response = await req(reqOptions);
+  const url = domain + '/subtitles/searchbytitle';
+  const response = await req({url,method:"POST",form:{query:encodeURIComponent(filename)}});
   const type = response.request._redirect.redirects.length === 0
     ? 'title'
     : 'release';
@@ -92,7 +91,6 @@ async function getMovieSubtitleDetails(movieName, language) {
     result: result,
   };
 }
-
 
 /** @description download's subtitle passivly, choose's first subtitle found.
 * @param {string} movieName - the name of the movie.
